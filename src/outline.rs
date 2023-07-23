@@ -174,6 +174,7 @@ pub fn make_outline_block(bounds: &Bounds) -> Vec<Mesh> {
     );
 
     let mut v = Vec::new();
+
     v.push(Mesh::from(shape::Box::from_corners(c1.0, c1.1)));
     v.push(Mesh::from(shape::Box::from_corners(c2.0, c2.1)));
     v.push(Mesh::from(shape::Box::from_corners(c3.0, c3.1)));
