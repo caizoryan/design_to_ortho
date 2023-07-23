@@ -1,6 +1,8 @@
+use std::time::Duration;
+
 use bevy::{
     core_pipeline::bloom::BloomSettings,
-    prelude::{Input, KeyCode, Query, Res, ResMut},
+    prelude::{FixedTime, FixedUpdate, Input, KeyCode, Query, Res, ResMut},
     time::Time,
 };
 
@@ -11,11 +13,22 @@ pub fn update_settings(
     mut index: ResMut<SelectedIndex>,
     mut variables: ResMut<crate::ChunkStates>,
     keycode: Res<Input<KeyCode>>,
+    mut timestep: ResMut<FixedTime>,
     time: Res<Time>,
 ) {
     let mut bloom_settings = camera.single_mut();
 
     let dt = time.delta_seconds();
+
+    // ----------------------------------------
+    // Increase speed
+    // ----------------------------------------
+    if keycode.just_pressed(KeyCode::Right) {
+        timestep.period += Duration::from_millis(10);
+    }
+    if keycode.just_pressed(KeyCode::Left) {
+        timestep.period -= Duration::from_millis(10);
+    }
 
     // ----------------------------------------
     // Hide and show ui
@@ -69,20 +82,20 @@ pub fn update_settings(
     let _ = match index.0 {
         Some(index) => {
             if keycode.pressed(KeyCode::Left) {
-                variables.0[index].bounds.0.x -= 0.05;
-                variables.0[index].bounds.1.x -= 0.05;
+                variables.0[index].bounds.min.x -= 0.05;
+                variables.0[index].bounds.max.x -= 0.05;
             }
             if keycode.pressed(KeyCode::Right) {
-                variables.0[index].bounds.0.x += 0.05;
-                variables.0[index].bounds.1.x += 0.05;
+                variables.0[index].bounds.min.x += 0.05;
+                variables.0[index].bounds.max.x += 0.05;
             }
             if keycode.pressed(KeyCode::Up) {
-                variables.0[index].bounds.0.y += 0.05;
-                variables.0[index].bounds.1.y += 0.05;
+                variables.0[index].bounds.min.y += 0.05;
+                variables.0[index].bounds.max.y += 0.05;
             }
             if keycode.pressed(KeyCode::Down) {
-                variables.0[index].bounds.0.y -= 0.05;
-                variables.0[index].bounds.1.y -= 0.05;
+                variables.0[index].bounds.min.y -= 0.05;
+                variables.0[index].bounds.max.y -= 0.05;
             }
         }
         None => (),

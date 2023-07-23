@@ -3,12 +3,14 @@
 // - [ ] in update block make sure you read the correct data from variables array
 
 mod egui;
+mod outline;
 mod setup;
 mod spawn_block;
 mod update_block;
 mod update_settings;
 
 use egui::update_egui;
+use outline::make_outline_block;
 use setup::setup;
 use spawn_block::init_blocks;
 use update_block::update_block;
@@ -29,6 +31,7 @@ pub struct ChunkState {
     pub playing: bool,
     pub life_time: i32,
     pub base_color: Color,
+    pub emissive_color: Color,
     pub scale: f32,
     pub inter_color: ColorChannels,
     pub perceptual_roughness: f32,
@@ -36,7 +39,10 @@ pub struct ChunkState {
 }
 
 #[derive(Clone)]
-pub struct Bounds(Vec3, Vec3);
+pub struct Bounds {
+    pub min: Vec3,
+    pub max: Vec3,
+}
 
 pub struct Rect {
     pub x: f32,
@@ -47,10 +53,10 @@ pub struct Rect {
 
 impl Into<Bounds> for Rect {
     fn into(self) -> Bounds {
-        Bounds(
-            Vec3::new(self.x, self.y, 0.0),
-            Vec3::new(self.x + self.w, self.y + self.h, 0.0),
-        )
+        Bounds {
+            min: Vec3::new(self.x, self.y, 0.0),
+            max: Vec3::new(self.x + self.w, self.y + self.h, 0.0),
+        }
     }
 }
 
@@ -101,6 +107,7 @@ fn main() {
         scale: SCALE,
         perceptual_roughness: 0.5,
         base_color: Color::rgb(0.09, 0.0, 0.0),
+        emissive_color: Color::rgb(1.0, 0.0, 0.0),
         inter_color: ColorChannels::R,
         bounds: Rect {
             x: -1.,
@@ -117,6 +124,7 @@ fn main() {
         scale: SCALE,
         perceptual_roughness: 0.5,
         base_color: Color::rgb(0.0, 0.09, 0.0),
+        emissive_color: Color::rgb(1.0, 0.0, 0.0),
         inter_color: ColorChannels::G,
         bounds: Rect {
             x: 1.5,

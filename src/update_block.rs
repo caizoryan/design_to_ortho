@@ -65,7 +65,7 @@ pub fn update_block(
 
         let m = StandardMaterial {
             base_color: c,
-            emissive: Color::rgb(1.0, 0.0, 0.0),
+            emissive: variables.emissive_color,
             emissive_texture: Some(texture_handle),
             perceptual_roughness: variables.perceptual_roughness,
             ..default()
@@ -75,9 +75,9 @@ pub fn update_block(
 }
 
 fn get_random_direction(cur: Vec3, bounds: &Bounds, scale: f32) -> Vec3 {
-    let x = get_random_f32(cur.x, bounds.0.x, bounds.1.x, scale);
-    let y = get_random_f32(cur.y, bounds.0.y, bounds.1.y, scale);
-    let z = get_random_f32(cur.z, bounds.0.z, bounds.1.z, scale);
+    let x = get_random_f32(cur.x, bounds.min.x, bounds.max.x, scale);
+    let y = get_random_f32(cur.y, bounds.min.y, bounds.max.y, scale);
+    let z = get_random_f32(cur.z, bounds.min.z, bounds.max.z, scale);
     Vec3::new(x, y, z)
 }
 

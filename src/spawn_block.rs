@@ -1,7 +1,7 @@
-use bevy::prelude::*;
+use bevy::{ecs::system::Command, prelude::*};
 use rand::Rng;
 
-use crate::{AutoCube, ChunkState, ChunkStates, ColorChannels, Rect, SCALE};
+use crate::{make_outline_block, AutoCube, ChunkState, ChunkStates, ColorChannels, Rect, SCALE};
 
 fn _spawn_block(
     commands: &mut Commands,
@@ -14,6 +14,7 @@ fn _spawn_block(
         playing: true,
         life_time: 100,
         base_color: Color::rgb(1.0, 0.7, 0.0),
+        emissive_color: Color::rgb(1.0, 0.0, 0.0),
         scale: 1.0,
         inter_color: ColorChannels::R,
         perceptual_roughness: 0.0,
@@ -59,5 +60,32 @@ pub fn init_blocks(
             _spawn_block(&mut commands, &mut meshes, &mut materials, chunk, index);
             index += 1;
         }
+    }
+
+    let mut b = chunks[0].bounds.clone();
+    b.min.z = -0.3;
+    b.max.z = 0.3;
+
+    let vec = make_outline_block(&b);
+
+    spawn_from_mesh(&mut commands, vec, &mut meshes, &mut materials);
+}
+
+fn spawn_from_mesh(
+    commands: &mut Commands,
+    mesh_vec: Vec<Mesh>,
+    meshes: &mut ResMut<Assets<Mesh>>,
+    materials: &mut ResMut<Assets<StandardMaterial>>,
+) {
+    for mesh in mesh_vec {
+        commands.spawn(PbrBundle {
+            mesh: meshes.add(mesh),
+            material: materials.add(StandardMaterial {
+                base_color: Color::rgb(0.0, 0.0, 0.0),
+                ..default()
+            }),
+            transform: Transform::from_translation(Vec3::new(0.0, 0.0, 0.0) * SCALE),
+            ..default()
+        });
     }
 }
