@@ -10,7 +10,7 @@ mod update_settings;
 
 use egui::update_egui;
 use setup::setup;
-use spawn_block::spawn_block;
+use spawn_block::init_blocks;
 use update_block::update_block;
 
 use bevy::{core_pipeline::experimental::taa::TemporalAntiAliasPlugin, prelude::*};
@@ -142,10 +142,10 @@ fn main() {
         .add_plugins(EguiPlugin)
         .add_plugins(PanOrbitCameraPlugin)
         .add_systems(Startup, setup)
-        .add_systems(Startup, spawn_block)
+        .add_systems(Startup, init_blocks)
         .add_systems(FixedUpdate, update_block)
         .add_systems(Update, update_egui)
         .add_systems(Update, update_settings)
-        .insert_resource(FixedTime::new_from_secs(0.02))
+        .insert_resource(FixedTime::new_from_secs(0.1))
         .run();
 }

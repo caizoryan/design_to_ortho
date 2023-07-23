@@ -22,9 +22,8 @@ pub fn update_block(
             if block.life_time == variables.life_time {
                 commands
                     .spawn(PbrBundle {
-                        mesh: meshes.add(Mesh::from(shape::UVSphere {
-                            radius: rand::thread_rng().gen_range(0.01 * SCALE..0.4 * SCALE),
-                            ..default()
+                        mesh: meshes.add(Mesh::from(shape::Cube {
+                            size: rand::thread_rng().gen_range(0.01 * SCALE..0.4 * SCALE),
                         })),
                         material: materials.add(StandardMaterial {
                             base_color: variables.base_color,
@@ -47,31 +46,31 @@ pub fn update_block(
                     });
             }
 
-            let mut c = variables.base_color;
-            let life_percent = block.life_time as f32 / variables.life_time as f32;
-
-            let _ = match variables.inter_color {
-                ColorChannels::R => c.set_r(life_percent),
-                ColorChannels::G => c.set_g(life_percent),
-                ColorChannels::B => c.set_b(life_percent),
-                ColorChannels::A => c.set_a(life_percent),
-            };
-
-            let texture_handle = asset_server.load("texture.png");
-
-            let m = StandardMaterial {
-                base_color: c,
-                base_color_texture: Some(texture_handle),
-                perceptual_roughness: variables.perceptual_roughness,
-                ..default()
-            };
-            let _ = materials.set(material, m);
-
             block.life_time -= 1;
             if block.life_time == 0 {
                 commands.get_entity(entity).unwrap().despawn_recursive();
             }
         }
+        let mut c = variables.base_color;
+        let life_percent = block.life_time as f32 / variables.life_time as f32;
+
+        let _ = match variables.inter_color {
+            ColorChannels::R => c.set_r(life_percent),
+            ColorChannels::G => c.set_g(life_percent),
+            ColorChannels::B => c.set_b(life_percent),
+            ColorChannels::A => c.set_a(life_percent),
+        };
+
+        let texture_handle = asset_server.load("texture.png");
+
+        let m = StandardMaterial {
+            base_color: c,
+            emissive: Color::rgb(1.0, 0.0, 0.0),
+            emissive_texture: Some(texture_handle),
+            perceptual_roughness: variables.perceptual_roughness,
+            ..default()
+        };
+        let _ = materials.set(material, m);
     }
 }
 
