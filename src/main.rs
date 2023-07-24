@@ -21,7 +21,18 @@ use bevy_panorbit_camera::PanOrbitCameraPlugin;
 use update_settings::update_settings;
 
 #[derive(Resource)]
-pub struct SelectedIndex(Option<usize>);
+pub struct UIState {
+    mode: CameraMode,
+    selected_index: Option<usize>,
+}
+
+pub enum CameraMode {
+    None,
+    Selection,
+    Transform,
+    Rotate,
+    Bloom,
+}
 
 #[derive(Resource)]
 pub struct ChunkStates(Vec<ChunkState>);
@@ -142,13 +153,16 @@ fn main() {
             brightness: 3.0,
             ..default()
         })
-        .insert_resource(SelectedIndex(None))
+        .insert_resource(UIState {
+            mode: CameraMode::None,
+            selected_index: None,
+        })
         .insert_resource(chunk_states)
         .insert_resource(ClearColor(Color::rgb(0.0, 0.0, 0.0)))
         .add_plugins(DefaultPlugins)
         .add_plugins(TemporalAntiAliasPlugin)
         .add_plugins(EguiPlugin)
-        .add_plugins(PanOrbitCameraPlugin)
+        // .add_plugins(PanOrbitCameraPlugin)
         .add_systems(Startup, setup)
         .add_systems(Startup, init_blocks)
         .add_systems(FixedUpdate, update_block)

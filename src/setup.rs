@@ -24,10 +24,7 @@ pub fn setup(mut commands: Commands) {
                     hdr: true,
                     ..Default::default()
                 },
-                transform: Transform {
-                    translation: Vec3::new(0.0, 0.0, 10.0) * crate::SCALE,
-                    ..Default::default()
-                },
+                transform: Transform::from_xyz(0.0, 0.0, 20.0).looking_at(Vec3::ZERO, Vec3::Y),
                 ..Default::default()
             },
             BloomSettings { ..default() },
@@ -39,6 +36,6 @@ pub fn setup(mut commands: Commands) {
             },
             ..default()
         })
-        .insert(TemporalAntiAliasBundle::default())
-        .insert(PanOrbitCamera::default());
+        .insert(TemporalAntiAliasBundle::default());
+    // .insert(PanOrbitCamera::default());
 }

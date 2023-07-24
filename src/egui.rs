@@ -4,14 +4,14 @@ use bevy_egui::{
     EguiContexts,
 };
 
-use crate::{Bounds, ChunkStates, ColorChannels, SelectedIndex};
+use crate::{Bounds, ChunkStates, ColorChannels, UIState};
 
 pub fn update_egui(
     mut contexts: EguiContexts,
     mut variables: ResMut<ChunkStates>,
-    selected: Res<SelectedIndex>,
+    state: Res<UIState>,
 ) {
-    let index = match selected.0 {
+    let index = match state.selected_index {
         Some(index) => index,
         _ => return,
     };
