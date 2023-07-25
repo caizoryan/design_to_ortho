@@ -1,21 +1,15 @@
 use std::time::Duration;
 
-use bevy::{
-    core_pipeline::bloom::BloomSettings,
-    prelude::{
-        Camera, FixedTime, FixedUpdate, Input, KeyCode, OrthographicProjection, Projection, Query,
-        Res, ResMut, Transform,
-    },
-    time::Time,
-};
+use bevy::{core_pipeline::bloom::BloomSettings, prelude::*, time::Time};
 
-use crate::{CameraMode, UIState};
+use crate::{setup::PlisCamera, CameraMode, UIState};
 
 fn press(keycode: Res<Input<KeyCode>>, key: KeyCode) -> bool {
     keycode.pressed(key) || keycode.just_pressed(key)
 }
+
 pub fn update_settings(
-    mut camera: Query<(&mut Transform, &mut BloomSettings)>,
+    mut camera: Query<(&mut Transform, &mut BloomSettings, &mut Projection), With<PlisCamera>>,
     mut state: ResMut<UIState>,
     mut variables: ResMut<crate::ChunkStates>,
     key: Res<Input<KeyCode>>,
@@ -25,6 +19,8 @@ pub fn update_settings(
     let mut bloom_settings = camera.single_mut();
     let shift = key.any_pressed([KeyCode::ShiftLeft, KeyCode::ShiftRight]);
     let dt = time.delta_seconds();
+
+    let mut c = camera.single_mut().2;
 
     let index = state.selected_index.unwrap_or(0);
     let SCALE = variables.0[index].scale;
@@ -79,31 +75,45 @@ pub fn update_settings(
             if key.just_pressed(KeyCode::Y) && shift {
                 camera.single_mut().0.translation.y -= 0.1 * SCALE;
             } else if shift && key.just_pressed(KeyCode::Z) {
-                camera.single_mut().0.translation.z -= 0.1 * SCALE;
+                if let Projection::Orthographic(ref mut orthographic) = *c {
+                    orthographic.scale -= 1.;
+                }
             } else if shift && key.just_pressed(KeyCode::X) {
                 camera.single_mut().0.translation.x -= 0.1 * SCALE;
             } else if key.just_pressed(KeyCode::Z) {
-                camera.single_mut().0.translation.z += 0.1 * SCALE;
+                if let Projection::Orthographic(ref mut orthographic) = *c {
+                    orthographic.scale += 1.;
+                }
             } else if key.just_pressed(KeyCode::X) {
                 camera.single_mut().0.translation.x += 0.1 * SCALE;
             } else if key.just_pressed(KeyCode::Y) {
                 camera.single_mut().0.translation.y += 0.1 * SCALE;
+            } else if key.just_pressed(KeyCode::Back) {
+                state.mode = CameraMode::Selection;
             }
         }
         CameraMode::Rotate => {
             let angle = 15.0_f32.to_radians();
             if key.just_pressed(KeyCode::Y) && shift {
-                camera.single_mut().0.rotate_y(-angle);
+                let angle = Quat::from_rotation_y(-angle);
+                camera.single_mut().0.rotate_around(Vec3::ZERO, angle);
             } else if shift && key.just_pressed(KeyCode::X) {
-                camera.single_mut().0.rotate_x(-angle);
+                let angle = Quat::from_rotation_x(-angle);
+                camera.single_mut().0.rotate_around(Vec3::ZERO, angle);
             } else if shift && key.just_pressed(KeyCode::Z) {
-                camera.single_mut().0.rotate_z(-angle);
+                let angle = Quat::from_rotation_z(-angle);
+                camera.single_mut().0.rotate_around(Vec3::ZERO, angle);
             } else if key.just_pressed(KeyCode::Z) {
-                camera.single_mut().0.rotate_z(angle);
+                let angle = Quat::from_rotation_z(angle);
+                camera.single_mut().0.rotate_around(Vec3::ZERO, -angle);
             } else if key.just_pressed(KeyCode::X) {
-                camera.single_mut().0.rotate_x(angle);
+                let angle = Quat::from_rotation_x(angle);
+                camera.single_mut().0.rotate_around(Vec3::ZERO, -angle);
             } else if key.just_pressed(KeyCode::Y) {
-                camera.single_mut().0.rotate_y(angle);
+                let angle = Quat::from_rotation_y(angle);
+                camera.single_mut().0.rotate_around(Vec3::ZERO, -angle);
+            } else if key.just_pressed(KeyCode::Back) {
+                state.mode = CameraMode::Selection;
             }
         }
         CameraMode::Bloom => todo!(),

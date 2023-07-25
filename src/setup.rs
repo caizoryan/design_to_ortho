@@ -8,6 +8,8 @@ use bevy::{
     render::camera::ScalingMode,
 };
 use bevy_panorbit_camera::PanOrbitCamera;
+#[derive(Component)]
+pub struct PlisCamera;
 
 pub fn setup(mut commands: Commands) {
     // camera
@@ -15,7 +17,7 @@ pub fn setup(mut commands: Commands) {
         .spawn((
             Camera3dBundle {
                 projection: OrthographicProjection {
-                    scale: 3.0,
+                    scale: 10.0,
                     scaling_mode: ScalingMode::FixedVertical(2.0),
                     ..default()
                 }
@@ -36,6 +38,7 @@ pub fn setup(mut commands: Commands) {
             },
             ..default()
         })
-        .insert(TemporalAntiAliasBundle::default());
+        .insert(TemporalAntiAliasBundle::default())
+        .insert(PlisCamera);
     // .insert(PanOrbitCamera::default());
 }
