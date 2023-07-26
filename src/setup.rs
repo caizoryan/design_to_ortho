@@ -38,7 +38,7 @@ pub fn setup(mut commands: Commands) {
             },
             ..default()
         })
-        .insert(TemporalAntiAliasBundle::default())
+        // .insert(TemporalAntiAliasBundle::default())
         .insert(PlisCamera);
     // .insert(PanOrbitCamera::default());
 }

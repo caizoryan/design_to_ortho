@@ -1,7 +1,13 @@
+use std::time::Duration;
+
 use bevy::{ecs::system::Command, prelude::*};
+use bevy_tweening::{lens::TransformPositionLens, Animator, AnimatorState, EaseFunction, Tween};
 use rand::Rng;
 
-use crate::{grid::GridMaster, make_outline_block, ChunkState, ChunkStates, Rect};
+use crate::{
+    grid_master::GridMaster, make_outline_block, Block, BlockState, ChunkState, ChunkStates,
+    DeleteMeDaddy, Position, Rect,
+};
 
 fn _spawn_block(
     commands: &mut Commands,
@@ -34,32 +40,45 @@ fn _spawn_block(
     });
 }
 
-pub fn init_block_fr(
+pub fn init_blocks(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
     grid_master: Res<GridMaster>,
 ) {
-}
+    let mut positions: Vec<Position> = Vec::new();
 
-fn get_basic_bitch_block(
-    mut meshes: ResMut<Assets<Mesh>>,
-    mut materials: ResMut<Assets<StandardMaterial>>,
-) -> PbrBundle {
-    PbrBundle {
-        mesh: meshes.add(Mesh::from(shape::Cube {
-            size: rand::thread_rng().gen_range(0.01..0.5),
-        })),
-        material: materials.add(StandardMaterial {
-            reflectance: 0.1,
-            ..default()
-        }),
-        transform: Transform::from_translation(Vec3::ZERO),
-        ..default()
+    for i in 0..grid_master.grid.cols() {
+        let mut col = 0;
+
+        grid_master.grid.iter_col(i).for_each(|block| {
+            if block.occupied {
+                positions.push(Position(col, i));
+            }
+            col += 1;
+        })
     }
+
+    positions.iter().for_each(|pos| {
+        commands
+            .spawn(PbrBundle {
+                mesh: meshes.add(Mesh::from(shape::Cube { size: 0.8 })),
+                material: materials.add(StandardMaterial {
+                    reflectance: 0.1,
+                    ..default()
+                }),
+                transform: Transform::from_translation(Position(pos.0, pos.1).into()),
+                ..default()
+            })
+            .insert(Block {
+                cur_location: Position(pos.0, pos.1),
+                next_location: None,
+                state: BlockState::Idle,
+            });
+    })
 }
 
-pub fn init_blocks(
+pub fn init_blocks_(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
@@ -83,21 +102,23 @@ pub fn init_blocks(
     spawn_from_mesh(&mut commands, vec, &mut meshes, &mut materials);
 }
 
-fn spawn_from_mesh(
+pub fn spawn_from_mesh(
     commands: &mut Commands,
     mesh_vec: Vec<Mesh>,
     meshes: &mut ResMut<Assets<Mesh>>,
     materials: &mut ResMut<Assets<StandardMaterial>>,
 ) {
     for mesh in mesh_vec {
-        commands.spawn(PbrBundle {
-            mesh: meshes.add(mesh),
-            material: materials.add(StandardMaterial {
-                base_color: Color::rgb(0.0, 0.0, 0.0),
+        commands
+            .spawn(PbrBundle {
+                mesh: meshes.add(mesh),
+                material: materials.add(StandardMaterial {
+                    base_color: Color::rgb(0.0, 0.0, 0.0),
+                    ..default()
+                }),
+                transform: Transform::from_translation(Vec3::new(0.0, 0.0, 0.0)),
                 ..default()
-            }),
-            transform: Transform::from_translation(Vec3::new(0.0, 0.0, 0.0)),
-            ..default()
-        });
+            })
+            .insert(DeleteMeDaddy);
     }
 }

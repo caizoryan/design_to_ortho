@@ -52,16 +52,12 @@ fn handle_edit_block_mode(
 
 pub fn update(
     mut contexts: EguiContexts,
-    variables: ResMut<ChunkStates>,
     mut state: ResMut<UIState>,
     mut projection: Query<&mut Projection>,
     mut transform: Query<&mut Transform, With<PlisCamera>>,
     keycode: Res<Input<KeyCode>>,
 ) {
     let ctx = contexts.ctx_mut();
-
-    let mut chunk_states = variables;
-    let chunk_states = chunk_states.as_mut();
 
     let mut projection = projection.single_mut();
     let projection = projection.as_mut();
@@ -76,7 +72,7 @@ pub fn update(
             }
         }
         Modes::Camera(mode) => handle_camera_mode(ctx, state, keycode, mode, transform, projection),
-        Modes::EditBlock(mode) => handle_edit_block_mode(ctx, state, keycode, mode, chunk_states),
+        _ => {} // Modes::EditBlock(mode) => handle_edit_block_mode(ctx, state, keycode, mode, chunk_states),
     };
 }
 

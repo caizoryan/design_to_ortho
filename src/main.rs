@@ -1,4 +1,4 @@
-mod grid;
+mod grid_master;
 mod modes;
 mod outline;
 mod setup;
@@ -6,8 +6,8 @@ mod spawn_block;
 mod update;
 mod update_block;
 
-use ::grid::Grid;
-use grid::GridMaster;
+use bevy_tweening::TweeningPlugin;
+use grid_master::GridMaster;
 use modes::Modes;
 use outline::make_outline_block;
 use rand::Rng;
@@ -24,18 +24,34 @@ pub struct UIState {
     mode: Modes,
 }
 
+#[derive(Component)]
+pub struct DeleteMeDaddy;
+
 #[derive(Resource)]
 pub struct ChunkStates(Vec<ChunkState>);
 
+#[derive(Clone)]
 pub struct Position(usize, usize);
 
+impl Into<Vec3> for &Position {
+    fn into(self) -> Vec3 {
+        Vec3::new(self.0 as f32, -(self.1 as f32), 0.0)
+    }
+}
+impl Into<Vec3> for Position {
+    fn into(self) -> Vec3 {
+        Vec3::new(self.0 as f32, -(self.1 as f32), 0.0)
+    }
+}
+
+#[derive(Clone)]
 pub enum BlockState {
     Idle,
     Animating,
     Done,
 }
 
-#[derive(Component)]
+#[derive(Component, Clone)]
 pub struct Block {
     pub cur_location: Position,
     pub next_location: Option<Position>,
@@ -64,8 +80,8 @@ pub struct Rect {
 impl Into<Bounds> for Rect {
     fn into(self) -> Bounds {
         Bounds {
-            min: Vec3::new(self.x, self.y, 0.0),
-            max: Vec3::new(self.x + self.w, self.y + self.h, 0.0),
+            min: Vec3::new(self.x, self.y, -1.0),
+            max: Vec3::new(self.x + self.w, self.y + self.h, 1.0),
         }
     }
 }
@@ -74,7 +90,7 @@ fn init_grid() -> GridMaster {
     let mut my_g = GridMaster::new(10, 10);
     let mut rand = rand::thread_rng();
     my_g.grid.iter_mut().for_each(|el| {
-        if rand.gen::<bool>() {
+        if rand.gen::<f32>() > 0.1 {
             el.occupied = true;
         }
     });
@@ -91,6 +107,7 @@ fn main() {
         .insert_resource(init_grid())
         .insert_resource(ClearColor(Color::rgb(0.0, 0.0, 0.0)))
         .add_plugins(DefaultPlugins)
+        .add_plugins(TweeningPlugin)
         .add_plugins(TemporalAntiAliasPlugin)
         .add_plugins(EguiPlugin)
         .add_systems(Startup, setup)
