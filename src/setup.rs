@@ -12,12 +12,22 @@ use bevy_panorbit_camera::PanOrbitCamera;
 pub struct PlisCamera;
 
 pub fn setup(mut commands: Commands) {
+    commands.spawn(DirectionalLightBundle {
+        transform: Transform::from_xyz(50.0, 150.0, 100.0),
+        directional_light: DirectionalLight {
+            shadows_enabled: true,
+            illuminance: 10000.0,
+            ..Default::default()
+        },
+        ..Default::default()
+    });
+
     // camera
     commands
         .spawn((
             Camera3dBundle {
                 projection: OrthographicProjection {
-                    scale: 1.0,
+                    scale: 50.0,
                     scaling_mode: ScalingMode::FixedVertical(1.0),
                     far: 5000.0,
                     near: 0.0,

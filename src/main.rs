@@ -97,7 +97,7 @@ fn init_grid() -> GridMaster {
     let mut my_g = GridMaster::new(20, 10);
     let mut rand = rand::thread_rng();
     my_g.grid.iter_mut().for_each(|el| {
-        if rand.gen::<f32>() > 0.7 {
+        if rand.gen::<f32>() > 0.74 {
             el.occupied = true;
         }
     });
