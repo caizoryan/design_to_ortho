@@ -13,14 +13,15 @@ pub struct GridBlock {
     pub occupied: bool,
 }
 
+#[derive(Resource)]
 pub struct GridMaster {
-    grid: Grid<GridBlock>,
-    clock: Clock,
+    pub grid: Grid<GridBlock>,
+    pub clock: Clock,
 }
 
 pub struct Clock {
-    time: f32,
-    interval: f32,
+    pub time: f32,
+    pub interval: f32,
 }
 
 pub enum Directions {
@@ -34,17 +35,24 @@ pub enum Directions {
     BottomLeft,
 }
 
-trait GridMasterTrait {
-    fn gib_ticket_plis(&mut self, x: usize, y: usize) -> Option<(usize, usize)>;
-
-    fn available_positions(&self, x: usize, y: usize) -> Vec<(usize, usize)>;
-
-    fn check_neighbour(&self, x: usize, y: usize, direction: Directions) -> bool;
-
-    fn check_available(&self, x: usize, y: usize) -> bool;
+impl Default for GridBlock {
+    fn default() -> Self {
+        Self { occupied: false }
+    }
 }
 
-impl GridMasterTrait for Grid<GridBlock> {
+impl GridMaster {
+    pub fn new(rows: usize, cols: usize) -> Self {
+        let mut grid = Grid::new(rows, cols);
+        Self {
+            grid,
+            clock: Clock {
+                time: 0.,
+                interval: 0.5,
+            },
+        }
+    }
+
     fn gib_ticket_plis(&mut self, x: usize, y: usize) -> Option<(usize, usize)> {
         // check for surrounding blocks
         // if block is not occupied return new location
@@ -55,7 +63,7 @@ impl GridMasterTrait for Grid<GridBlock> {
                 let mut rng = rand::thread_rng();
                 let random_index = rng.gen_range(0..available_positions.len());
                 let (x, y) = available_positions[random_index];
-                self.get_mut(x, y).unwrap().occupied = true;
+                self.grid.get_mut(x, y).unwrap().occupied = true;
                 Some((x, y))
             }
         }
@@ -75,7 +83,7 @@ impl GridMasterTrait for Grid<GridBlock> {
     }
 
     fn check_available(&self, x: usize, y: usize) -> bool {
-        self.get(x, y).is_some_and(|x| x.occupied == false)
+        self.grid.get(x, y).is_some_and(|x| x.occupied == false)
     }
 
     fn available_positions(&self, x: usize, y: usize) -> Vec<(usize, usize)> {

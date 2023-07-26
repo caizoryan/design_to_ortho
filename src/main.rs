@@ -6,8 +6,11 @@ mod spawn_block;
 mod update;
 mod update_block;
 
+use ::grid::Grid;
+use grid::GridMaster;
 use modes::Modes;
 use outline::make_outline_block;
+use rand::Rng;
 use setup::setup;
 use spawn_block::init_blocks;
 use update::update;
@@ -24,15 +27,24 @@ pub struct UIState {
 #[derive(Resource)]
 pub struct ChunkStates(Vec<ChunkState>);
 
+pub struct Position(usize, usize);
+
+pub enum BlockState {
+    Idle,
+    Animating,
+    Done,
+}
+
+#[derive(Component)]
+pub struct Block {
+    pub cur_location: Position,
+    pub next_location: Option<Position>,
+    pub state: BlockState,
+}
+
 #[derive(Clone)]
 pub struct ChunkState {
     pub playing: bool,
-    pub life_time: i32,
-    pub base_color: Color,
-    pub emissive_color: Color,
-    pub scale: f32,
-    pub inter_color: ColorChannels,
-    pub perceptual_roughness: f32,
     pub bounds: Bounds,
 }
 
@@ -58,90 +70,25 @@ impl Into<Bounds> for Rect {
     }
 }
 
-#[derive(Component)]
-pub struct AutoCube {
-    pub index: usize,
-    pub life_time: i32,
-}
-
-struct Temp(f32, f32, f32, f32);
-
-impl Into<Temp> for Color {
-    fn into(self) -> Temp {
-        Temp(self.r(), self.g(), self.b(), self.a())
-    }
-}
-
-impl Into<Color> for Temp {
-    fn into(self) -> Color {
-        Color::rgba(self.0, self.1, self.2, self.3)
-    }
-}
-
-impl Default for AutoCube {
-    fn default() -> Self {
-        AutoCube {
-            index: 0,
-            life_time: LIFETIME,
+fn init_grid() -> GridMaster {
+    let mut my_g = GridMaster::new(10, 10);
+    let mut rand = rand::thread_rng();
+    my_g.grid.iter_mut().for_each(|el| {
+        if rand.gen::<bool>() {
+            el.occupied = true;
         }
-    }
-}
-
-const LIFETIME: i32 = 100;
-pub const SCALE: f32 = 3.;
-
-#[derive(PartialEq, Eq, Clone)]
-pub enum ColorChannels {
-    R,
-    G,
-    B,
-    A,
+    });
+    my_g
 }
 
 fn main() {
-    let block_1 = ChunkState {
-        playing: true,
-        life_time: LIFETIME,
-        scale: SCALE,
-        perceptual_roughness: 0.5,
-        base_color: Color::rgb(0.09, 0.0, 0.0),
-        emissive_color: Color::rgb(1.0, 0.0, 0.0),
-        inter_color: ColorChannels::R,
-        bounds: Rect {
-            x: -1.,
-            y: -1.,
-            w: 2.,
-            h: 4.,
-        }
-        .into(),
-    };
-
-    let block_2 = ChunkState {
-        playing: true,
-        life_time: LIFETIME,
-        scale: SCALE,
-        perceptual_roughness: 0.5,
-        base_color: Color::rgb(0.0, 0.09, 0.0),
-        emissive_color: Color::rgb(1.0, 0.0, 0.0),
-        inter_color: ColorChannels::G,
-        bounds: Rect {
-            x: 1.5,
-            y: 2.5,
-            w: 1.,
-            h: 3.,
-        }
-        .into(),
-    };
-
-    let chunk_states = ChunkStates(vec![block_1, block_2]);
-
     App::new()
         .insert_resource(AmbientLight {
             brightness: 3.0,
             ..default()
         })
         .insert_resource(UIState { mode: Modes::Home })
-        .insert_resource(chunk_states)
+        .insert_resource(init_grid())
         .insert_resource(ClearColor(Color::rgb(0.0, 0.0, 0.0)))
         .add_plugins(DefaultPlugins)
         .add_plugins(TemporalAntiAliasPlugin)

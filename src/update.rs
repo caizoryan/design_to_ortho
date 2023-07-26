@@ -7,7 +7,7 @@ use bevy_egui::{
 use crate::{
     modes::{CameraModes, CameraSelection, EditBlockModes, Modes},
     setup::PlisCamera,
-    Bounds, ChunkStates, ColorChannels, UIState,
+    Bounds, ChunkStates, UIState,
 };
 
 // each mode has its own implementation of ui
@@ -48,48 +48,6 @@ fn handle_edit_block_mode(
     mode: EditBlockModes,
     mut chunk_states: &mut ChunkStates,
 ) {
-}
-
-fn if_ui_needed(ctx: &mut Context, variables: &mut ChunkStates, index: usize) {
-    egui::Window::new("Cube material preview").show(ctx, |ui| {
-        let res = egui::Grid::new("preview").show(ui, |ui| {
-            ui.label("Base color:");
-            color_picker_widget(ui, &mut variables.0[index].base_color);
-            ui.end_row();
-
-            ui.label("Emissive color:");
-            color_picker_widget(ui, &mut variables.0[index].emissive_color);
-            ui.end_row();
-
-            ui.label("Scale");
-            egui::Slider::new(&mut variables.0[index].scale, 0.3..=20.0).ui(ui);
-            ui.end_row();
-
-            ui.label("Perceptual roughness:");
-            egui::Slider::new(&mut variables.0[index].perceptual_roughness, 0.01..=1.0).ui(ui);
-            ui.end_row();
-
-            ui.selectable_value(&mut variables.0[index].inter_color, ColorChannels::R, "R");
-            ui.selectable_value(&mut variables.0[index].inter_color, ColorChannels::G, "G");
-            ui.selectable_value(&mut variables.0[index].inter_color, ColorChannels::B, "B");
-            ui.end_row();
-
-            ui.selectable_value(&mut variables.0[index].playing, true, "Playing");
-            ui.selectable_value(&mut variables.0[index].playing, false, "Paused");
-
-            ui.end_row();
-            ui.columns(2, |ui| {
-                ui[0].label("Min:");
-                ui[0].add(location_edit_widget(&mut variables.0[index].bounds.min));
-                ui[0].end_row();
-
-                ui[1].label("Max:");
-                ui[1].add(location_edit_widget(&mut variables.0[index].bounds.max));
-                ui[1].end_row();
-            });
-        });
-        res
-    });
 }
 
 pub fn update(

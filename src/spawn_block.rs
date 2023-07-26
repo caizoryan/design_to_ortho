@@ -1,7 +1,7 @@
 use bevy::{ecs::system::Command, prelude::*};
 use rand::Rng;
 
-use crate::{make_outline_block, AutoCube, ChunkState, ChunkStates, ColorChannels, Rect, SCALE};
+use crate::{grid::GridMaster, make_outline_block, ChunkState, ChunkStates, Rect};
 
 fn _spawn_block(
     commands: &mut Commands,
@@ -12,12 +12,6 @@ fn _spawn_block(
 ) {
     let c = ChunkState {
         playing: true,
-        life_time: 100,
-        base_color: Color::rgb(1.0, 0.7, 0.0),
-        emissive_color: Color::rgb(1.0, 0.0, 0.0),
-        scale: 1.0,
-        inter_color: ColorChannels::R,
-        perceptual_roughness: 0.0,
         bounds: Rect {
             x: -1.,
             y: -1.,
@@ -27,24 +21,42 @@ fn _spawn_block(
         .into(),
     };
 
-    commands
-        .spawn(PbrBundle {
-            mesh: meshes.add(Mesh::from(shape::Cube {
-                size: rand::thread_rng().gen_range(0.01..0.5),
-            })),
-            material: materials.add(StandardMaterial {
-                base_color: chunk.base_color,
-                perceptual_roughness: chunk.perceptual_roughness,
-                reflectance: 0.1,
-                ..default()
-            }),
-            transform: Transform::from_translation(Vec3::new(0.0, 10.0, 0.0) * SCALE),
+    commands.spawn(PbrBundle {
+        mesh: meshes.add(Mesh::from(shape::Cube {
+            size: rand::thread_rng().gen_range(0.01..0.5),
+        })),
+        material: materials.add(StandardMaterial {
+            reflectance: 0.1,
             ..default()
-        })
-        .insert(AutoCube {
-            life_time: chunk.life_time,
-            index: i,
-        });
+        }),
+        transform: Transform::from_translation(Vec3::new(0.0, 10.0, 0.0)),
+        ..default()
+    });
+}
+
+pub fn init_block_fr(
+    mut commands: Commands,
+    mut meshes: ResMut<Assets<Mesh>>,
+    mut materials: ResMut<Assets<StandardMaterial>>,
+    grid_master: Res<GridMaster>,
+) {
+}
+
+fn get_basic_bitch_block(
+    mut meshes: ResMut<Assets<Mesh>>,
+    mut materials: ResMut<Assets<StandardMaterial>>,
+) -> PbrBundle {
+    PbrBundle {
+        mesh: meshes.add(Mesh::from(shape::Cube {
+            size: rand::thread_rng().gen_range(0.01..0.5),
+        })),
+        material: materials.add(StandardMaterial {
+            reflectance: 0.1,
+            ..default()
+        }),
+        transform: Transform::from_translation(Vec3::ZERO),
+        ..default()
+    }
 }
 
 pub fn init_blocks(
@@ -84,7 +96,7 @@ fn spawn_from_mesh(
                 base_color: Color::rgb(0.0, 0.0, 0.0),
                 ..default()
             }),
-            transform: Transform::from_translation(Vec3::new(0.0, 0.0, 0.0) * SCALE),
+            transform: Transform::from_translation(Vec3::new(0.0, 0.0, 0.0)),
             ..default()
         });
     }
