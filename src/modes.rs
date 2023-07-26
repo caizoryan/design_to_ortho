@@ -65,6 +65,7 @@ impl Rotate {
         state: &mut UIState,
         transform: &mut bevy::prelude::Transform,
         projection: &mut Projection,
+        camera: Entity,
     ) {
         let shift = keycode.any_pressed([KeyCode::ShiftLeft, KeyCode::ShiftRight]);
         let angle = 15.0_f32.to_radians();

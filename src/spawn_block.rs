@@ -62,9 +62,11 @@ pub fn init_blocks(
     positions.iter().for_each(|pos| {
         commands
             .spawn(PbrBundle {
-                mesh: meshes.add(Mesh::from(shape::Cube { size: 0.8 })),
+                mesh: meshes.add(Mesh::from(shape::Cube { size: 1.0 })),
                 material: materials.add(StandardMaterial {
-                    reflectance: 0.1,
+                    base_color: Color::rgb(1.0, rand::thread_rng().gen::<f32>(), 0.0),
+                    emissive: Color::rgb(1.0, 0.0, 0.0),
+                    perceptual_roughness: 0.7,
                     ..default()
                 }),
                 transform: Transform::from_translation(Position(pos.0, pos.1).into()),

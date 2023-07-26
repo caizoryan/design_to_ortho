@@ -86,10 +86,10 @@ impl Into<Bounds> for Rect {
 }
 
 fn init_grid() -> GridMaster {
-    let mut my_g = GridMaster::new(10, 10);
+    let mut my_g = GridMaster::new(20, 10);
     let mut rand = rand::thread_rng();
     my_g.grid.iter_mut().for_each(|el| {
-        if rand.gen::<f32>() > 0.1 {
+        if rand.gen::<f32>() > 0.7 {
             el.occupied = true;
         }
     });

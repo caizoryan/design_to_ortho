@@ -29,7 +29,10 @@ pub fn setup(mut commands: Commands) {
                 transform: Transform::from_xyz(0.0, 0.0, 20.0).looking_at(Vec3::ZERO, Vec3::Y),
                 ..Default::default()
             },
-            BloomSettings { ..default() },
+            BloomSettings {
+                intensity: 0.18,
+                ..default()
+            },
         ))
         .insert(ScreenSpaceAmbientOcclusionBundle {
             settings: ScreenSpaceAmbientOcclusionSettings {
@@ -38,7 +41,7 @@ pub fn setup(mut commands: Commands) {
             },
             ..default()
         })
-        // .insert(TemporalAntiAliasBundle::default())
+        .insert(TemporalAntiAliasBundle::default())
         .insert(PlisCamera);
     // .insert(PanOrbitCamera::default());
 }

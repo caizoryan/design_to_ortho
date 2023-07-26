@@ -24,6 +24,7 @@ fn handle_camera_mode(
     mode: CameraModes,
     mut transform: &mut Transform,
     mut projection: &mut Projection,
+    camera: Entity,
 ) {
     match mode {
         CameraModes::Selection(s) => {
@@ -36,7 +37,13 @@ fn handle_camera_mode(
         }
         CameraModes::Rotate(r) => {
             r.clone().ui(ctx);
-            r.key_update(&keycode, &mut state, &mut transform, &mut projection);
+            r.key_update(
+                &keycode,
+                &mut state,
+                &mut transform,
+                &mut projection,
+                camera,
+            );
         }
     }
 }
@@ -53,14 +60,15 @@ fn handle_edit_block_mode(
 pub fn update(
     mut contexts: EguiContexts,
     mut state: ResMut<UIState>,
-    mut projection: Query<&mut Projection>,
+    mut query: Query<(Entity, &mut Projection)>,
     mut transform: Query<&mut Transform, With<PlisCamera>>,
     keycode: Res<Input<KeyCode>>,
 ) {
     let ctx = contexts.ctx_mut();
 
-    let mut projection = projection.single_mut();
-    let projection = projection.as_mut();
+    let mut q = query.single_mut();
+    let camera = q.0;
+    let projection = q.1.as_mut();
 
     let mut transform = transform.single_mut();
     let transform = transform.as_mut();
@@ -71,7 +79,9 @@ pub fn update(
                 state.mode = Modes::Camera(CameraModes::Selection(CameraSelection));
             }
         }
-        Modes::Camera(mode) => handle_camera_mode(ctx, state, keycode, mode, transform, projection),
+        Modes::Camera(mode) => {
+            handle_camera_mode(ctx, state, keycode, mode, transform, projection, camera)
+        }
         _ => {} // Modes::EditBlock(mode) => handle_edit_block_mode(ctx, state, keycode, mode, chunk_states),
     };
 }
