@@ -1,37 +1,26 @@
-// - [ ] keep track of which block is being edited
 // - [ ] use that in egui to update the data
 // - [ ] in update block make sure you read the correct data from variables array
 
-mod egui;
+mod modes;
 mod outline;
 mod setup;
 mod spawn_block;
+mod update;
 mod update_block;
-mod update_settings;
 
-use egui::update_egui;
+use modes::Modes;
 use outline::make_outline_block;
 use setup::setup;
 use spawn_block::init_blocks;
+use update::update;
 use update_block::update_block;
 
 use bevy::{core_pipeline::experimental::taa::TemporalAntiAliasPlugin, prelude::*};
 use bevy_egui::EguiPlugin;
-use bevy_panorbit_camera::PanOrbitCameraPlugin;
-use update_settings::update_settings;
 
 #[derive(Resource)]
 pub struct UIState {
-    mode: CameraMode,
-    selected_index: Option<usize>,
-}
-
-pub enum CameraMode {
-    None,
-    Selection,
-    Transform,
-    Rotate,
-    Bloom,
+    mode: Modes,
 }
 
 #[derive(Resource)]
@@ -153,21 +142,16 @@ fn main() {
             brightness: 3.0,
             ..default()
         })
-        .insert_resource(UIState {
-            mode: CameraMode::None,
-            selected_index: None,
-        })
+        .insert_resource(UIState { mode: Modes::Home })
         .insert_resource(chunk_states)
         .insert_resource(ClearColor(Color::rgb(0.0, 0.0, 0.0)))
         .add_plugins(DefaultPlugins)
         .add_plugins(TemporalAntiAliasPlugin)
         .add_plugins(EguiPlugin)
-        // .add_plugins(PanOrbitCameraPlugin)
         .add_systems(Startup, setup)
         .add_systems(Startup, init_blocks)
         .add_systems(FixedUpdate, update_block)
-        .add_systems(Update, update_egui)
-        .add_systems(Update, update_settings)
+        .add_systems(Update, update)
         .insert_resource(FixedTime::new_from_secs(0.1))
         .run();
 }

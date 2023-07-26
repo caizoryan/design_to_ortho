@@ -1,22 +1,56 @@
 use bevy::prelude::*;
 use bevy_egui::{
-    egui::{self, InnerResponse, Widget},
+    egui::{self, Context, InnerResponse, Ui, Widget},
     EguiContexts,
 };
 
-use crate::{Bounds, ChunkStates, ColorChannels, UIState};
+use crate::{
+    modes::{CameraModes, CameraSelection, EditBlockModes, Modes},
+    setup::PlisCamera,
+    Bounds, ChunkStates, ColorChannels, UIState,
+};
 
-pub fn update_egui(
-    mut contexts: EguiContexts,
-    mut variables: ResMut<ChunkStates>,
-    state: Res<UIState>,
+// each mode has its own implementation of ui
+// its own implementation of update
+
+fn label(ui: &mut Ui, text: &str) {
+    ui.label(text);
+}
+
+fn handle_camera_mode(
+    ctx: &mut Context,
+    mut state: ResMut<UIState>,
+    keycode: Res<Input<KeyCode>>,
+    mode: CameraModes,
+    mut transform: &mut Transform,
+    mut projection: &mut Projection,
 ) {
-    let index = match state.selected_index {
-        Some(index) => index,
-        _ => return,
-    };
+    match mode {
+        CameraModes::Selection(s) => {
+            s.clone().ui(ctx);
+            s.key_update(&keycode, &mut state);
+        }
+        CameraModes::Transform(t) => {
+            t.clone().ui(ctx);
+            t.key_update(&keycode, &mut state, &mut transform, &mut projection);
+        }
+        CameraModes::Rotate(r) => {
+            r.clone().ui(ctx);
+            r.key_update(&keycode, &mut state, &mut transform, &mut projection);
+        }
+    }
+}
 
-    let ctx = contexts.ctx_mut();
+fn handle_edit_block_mode(
+    ctx: &mut Context,
+    mut state: ResMut<UIState>,
+    keycode: Res<Input<KeyCode>>,
+    mode: EditBlockModes,
+    mut chunk_states: &mut ChunkStates,
+) {
+}
+
+fn if_ui_needed(ctx: &mut Context, variables: &mut ChunkStates, index: usize) {
     egui::Window::new("Cube material preview").show(ctx, |ui| {
         let res = egui::Grid::new("preview").show(ui, |ui| {
             ui.label("Base color:");
@@ -56,6 +90,36 @@ pub fn update_egui(
         });
         res
     });
+}
+
+pub fn update(
+    mut contexts: EguiContexts,
+    variables: ResMut<ChunkStates>,
+    mut state: ResMut<UIState>,
+    mut projection: Query<&mut Projection>,
+    mut transform: Query<&mut Transform, With<PlisCamera>>,
+    keycode: Res<Input<KeyCode>>,
+) {
+    let ctx = contexts.ctx_mut();
+
+    let mut chunk_states = variables;
+    let chunk_states = chunk_states.as_mut();
+
+    let mut projection = projection.single_mut();
+    let projection = projection.as_mut();
+
+    let mut transform = transform.single_mut();
+    let transform = transform.as_mut();
+
+    let _ = match state.mode.clone() {
+        Modes::Home => {
+            if keycode.just_pressed(KeyCode::C) {
+                state.mode = Modes::Camera(CameraModes::Selection(CameraSelection));
+            }
+        }
+        Modes::Camera(mode) => handle_camera_mode(ctx, state, keycode, mode, transform, projection),
+        Modes::EditBlock(mode) => handle_edit_block_mode(ctx, state, keycode, mode, chunk_states),
+    };
 }
 
 fn location_edit_widget(location: &mut Vec3) -> impl Widget + '_ {
