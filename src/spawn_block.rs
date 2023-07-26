@@ -6,7 +6,7 @@ use rand::Rng;
 
 use crate::{
     grid_master::GridMaster, make_outline_block, Block, BlockState, ChunkState, ChunkStates,
-    DeleteMeDaddy, Position, Rect,
+    DeleteMeDaddy, Position, Rect, SCALE,
 };
 
 fn _spawn_block(
@@ -62,10 +62,12 @@ pub fn init_blocks(
     positions.iter().for_each(|pos| {
         commands
             .spawn(PbrBundle {
-                mesh: meshes.add(Mesh::from(shape::Cube { size: 1.0 })),
+                mesh: meshes.add(Mesh::from(shape::Cube {
+                    size: (1.0 + rand::thread_rng().gen_range(0.01..0.02)) * SCALE,
+                })),
                 material: materials.add(StandardMaterial {
                     base_color: Color::rgb(1.0, rand::thread_rng().gen::<f32>(), 0.0),
-                    emissive: Color::rgb(1.0, 0.0, 0.0),
+                    emissive: Color::rgb(0.0, 0.0, 0.0),
                     perceptual_roughness: 0.7,
                     ..default()
                 }),

@@ -10,7 +10,7 @@ use bevy_tweening::{
     Animator, EaseFunction, EaseMethod, Tracks, Tween,
 };
 
-use crate::UIState;
+use crate::{UIState, SCALE};
 
 #[derive(Clone, Debug)]
 pub enum Modes {
@@ -210,20 +210,20 @@ impl Transform {
         projection: &mut Projection,
     ) {
         if keycode.just_pressed(KeyCode::X) && keycode.pressed(KeyCode::ShiftLeft) {
-            transform.translation.x -= 1.0;
+            transform.translation.x -= 1.0 * SCALE;
         } else if keycode.just_pressed(KeyCode::Y) && keycode.pressed(KeyCode::ShiftLeft) {
-            transform.translation.y -= 1.0;
+            transform.translation.y -= 1.0 * SCALE;
         } else if keycode.just_pressed(KeyCode::Z) && keycode.pressed(KeyCode::ShiftLeft) {
             if let Projection::Orthographic(ref mut orthographic) = *projection {
-                orthographic.scale -= 1.;
+                orthographic.scale -= 1. * SCALE;
             }
         } else if keycode.just_pressed(KeyCode::X) {
-            transform.translation.x += 1.0;
+            transform.translation.x += 1.0 * SCALE;
         } else if keycode.just_pressed(KeyCode::Y) {
-            transform.translation.y += 1.0;
+            transform.translation.y += 1.0 * SCALE;
         } else if keycode.just_pressed(KeyCode::Z) {
             if let Projection::Orthographic(ref mut orthographic) = *projection {
-                orthographic.scale += 1.;
+                orthographic.scale += 1. * SCALE;
             }
         } else if keycode.just_pressed(KeyCode::B) {
             state.mode = Modes::Camera(CameraModes::Selection(CameraSelection));

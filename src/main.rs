@@ -35,12 +35,18 @@ pub struct Position(usize, usize);
 
 impl Into<Vec3> for &Position {
     fn into(self) -> Vec3 {
-        Vec3::new(self.0 as f32, -(self.1 as f32), 0.0)
+        Vec3::new((self.0 as f32) * SCALE, -(self.1 as f32) * SCALE, 0.0)
     }
 }
 impl Into<Vec3> for Position {
     fn into(self) -> Vec3 {
-        Vec3::new(self.0 as f32, -(self.1 as f32), 0.0)
+        Vec3::new((self.0 as f32) * SCALE, -(self.1 as f32) * SCALE, 0.0)
+    }
+}
+
+impl Into<Position> for Vec3 {
+    fn into(self) -> Position {
+        Position((self.x / SCALE) as usize, (self.y / SCALE) as usize)
     }
 }
 
@@ -75,6 +81,8 @@ pub struct Rect {
     pub w: f32,
     pub h: f32,
 }
+
+pub const SCALE: f32 = 5.;
 
 impl Into<Bounds> for Rect {
     fn into(self) -> Bounds {
