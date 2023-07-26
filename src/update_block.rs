@@ -6,13 +6,12 @@ use rand::Rng;
 
 use crate::{
     grid_master::GridMaster, outline::make_outline_block, spawn_block::spawn_from_mesh, Block,
-    Bounds, DeleteMeDaddy,
+    BlockState, Bounds, DeleteMeDaddy,
 };
 
 pub fn update_block(
     mut commands: Commands,
-    mut query: Query<(Entity, &mut Transform, &mut Block)>,
-    delete_me_daddy: Query<(Entity, &DeleteMeDaddy)>,
+    mut query: Query<(Entity, &Transform, &mut Block)>,
     mut grid_master: ResMut<GridMaster>,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
@@ -20,14 +19,10 @@ pub fn update_block(
 ) {
     grid_master.clock.tick(time.delta_seconds());
 
-    for (entity, _delete_me_daddy) in delete_me_daddy.iter() {
-        commands.entity(entity).despawn_recursive();
-    }
-
-    for (entity, mut transform, mut block) in query.iter_mut() {
+    for (entity, transform, mut block) in query.iter_mut() {
         let bs = block.state.clone();
         match bs {
-            crate::BlockState::Idle => {
+            BlockState::Idle => {
                 block.next_location = grid_master.gib_ticket_plis(&block.cur_location);
                 if block.next_location.is_some() {
                     block.state = crate::BlockState::Animating;
@@ -46,7 +41,7 @@ pub fn update_block(
                         .insert(Animator::new(animation).with_state(AnimatorState::Playing));
                 };
             }
-            crate::BlockState::Animating => {
+            BlockState::Animating => {
                 if transform.translation
                     == Vec3::new(
                         block.next_location.as_ref().unwrap().0 as f32,
@@ -60,31 +55,6 @@ pub fn update_block(
                     commands.entity(entity).remove::<Animator<Block>>();
                 }
             }
-            crate::BlockState::Done => {}
         }
     }
-
-    for i in 0..grid_master.grid.cols() {
-        let mut col = 0;
-
-        grid_master.grid.iter_col(i).for_each(|block| {
-            if !block.occupied {
-                let b: Bounds = crate::Rect {
-                    x: i as f32,
-                    y: -(col as f32),
-                    w: 0.2,
-                    h: 0.2,
-                }
-                .into();
-
-                let vec = make_outline_block(&b);
-                spawn_from_mesh(&mut commands, vec, &mut meshes, &mut materials);
-            }
-            col += 1;
-        })
-    }
-    grid_master
-        .grid
-        .iter()
-        .for_each(|block| if block.occupied == false {})
 }

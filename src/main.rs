@@ -48,7 +48,6 @@ impl Into<Vec3> for Position {
 pub enum BlockState {
     Idle,
     Animating,
-    Done,
 }
 
 #[derive(Component, Clone)]
