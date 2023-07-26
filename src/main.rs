@@ -112,7 +112,7 @@ fn main() {
         })
         .insert_resource(UIState { mode: Modes::Home })
         .insert_resource(init_grid())
-        .insert_resource(ClearColor(Color::rgb(0.0, 0.0, 0.0)))
+        .insert_resource(ClearColor(Color::rgb(1.0, 1.0, 1.0)))
         .add_plugins(DefaultPlugins)
         .add_plugins(TweeningPlugin)
         .add_plugins(TemporalAntiAliasPlugin)

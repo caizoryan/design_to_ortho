@@ -17,8 +17,10 @@ pub fn setup(mut commands: Commands) {
         .spawn((
             Camera3dBundle {
                 projection: OrthographicProjection {
-                    scale: 10.0,
-                    scaling_mode: ScalingMode::FixedVertical(2.0),
+                    scale: 1.0,
+                    scaling_mode: ScalingMode::FixedVertical(1.0),
+                    far: 5000.0,
+                    near: 0.0,
                     ..default()
                 }
                 .into(),
@@ -26,7 +28,7 @@ pub fn setup(mut commands: Commands) {
                     hdr: true,
                     ..Default::default()
                 },
-                transform: Transform::from_xyz(0.0, 0.0, 20.0).looking_at(Vec3::ZERO, Vec3::Y),
+                transform: Transform::from_xyz(0.0, 0.0, 200.0).looking_at(Vec3::ZERO, Vec3::Y),
                 ..Default::default()
             },
             BloomSettings {
