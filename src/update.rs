@@ -1,4 +1,4 @@
-use bevy::prelude::*;
+use bevy::{prelude::*, transform::commands};
 use bevy_egui::{
     egui::{self, Context, InnerResponse, Ui, Widget},
     EguiContexts,
@@ -19,6 +19,7 @@ fn label(ui: &mut Ui, text: &str) {
 
 fn handle_camera_mode(
     ctx: &mut Context,
+    mut commands: Commands,
     mut state: ResMut<UIState>,
     keycode: Res<Input<KeyCode>>,
     mode: CameraModes,
@@ -38,6 +39,7 @@ fn handle_camera_mode(
         CameraModes::Rotate(r) => {
             r.clone().ui(ctx);
             r.key_update(
+                commands,
                 &keycode,
                 &mut state,
                 &mut transform,
@@ -59,6 +61,7 @@ fn handle_edit_block_mode(
 
 pub fn update(
     mut contexts: EguiContexts,
+    mut commands: Commands,
     mut state: ResMut<UIState>,
     mut query: Query<(Entity, &mut Projection)>,
     mut transform: Query<&mut Transform, With<PlisCamera>>,
@@ -79,9 +82,9 @@ pub fn update(
                 state.mode = Modes::Camera(CameraModes::Selection(CameraSelection));
             }
         }
-        Modes::Camera(mode) => {
-            handle_camera_mode(ctx, state, keycode, mode, transform, projection, camera)
-        }
+        Modes::Camera(mode) => handle_camera_mode(
+            ctx, commands, state, keycode, mode, transform, projection, camera,
+        ),
         _ => {} // Modes::EditBlock(mode) => handle_edit_block_mode(ctx, state, keycode, mode, chunk_states),
     };
 }

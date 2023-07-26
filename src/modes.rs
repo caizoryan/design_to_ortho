@@ -1,7 +1,13 @@
-use bevy::prelude::*;
+use std::time::Duration;
+
+use bevy::{prelude::*, transform::commands};
 use bevy_egui::{
     egui::{self, Context, InnerResponse, Ui, Widget},
     EguiContexts,
+};
+use bevy_tweening::{
+    lens::{TransformPositionLens, TransformRotationLens},
+    Animator, EaseFunction, EaseMethod, Tracks, Tween,
 };
 
 use crate::UIState;
@@ -58,9 +64,53 @@ impl CameraSelection {
     }
 }
 
+fn translate_rotate_around(
+    cur_translation: Vec3,
+    cur_rotation: Quat,
+    point: Vec3,
+    rotation: Quat,
+) -> (Vec3, Quat) {
+    let translation = point + rotation * (cur_translation - point);
+    let rotation = rotation * cur_rotation;
+
+    (translation, rotation)
+}
+
+fn roatate_around_animation(
+    cur_translation: Vec3,
+    cur_rotation: Quat,
+    point: Vec3,
+    rotation: Quat,
+    duration: Duration,
+) -> Tracks<bevy::prelude::Transform> {
+    let (t, r) = translate_rotate_around(cur_translation, cur_rotation, Vec3::ZERO, rotation);
+    let tween_t = Tween::new(
+        EaseFunction::QuadraticOut,
+        Duration::from_millis(250),
+        TransformPositionLens {
+            start: cur_translation,
+            end: t,
+        },
+    );
+
+    let tween_r = Tween::new(
+        EaseFunction::QuadraticOut,
+        Duration::from_millis(250),
+        TransformRotationLens {
+            start: cur_rotation,
+            end: r,
+        },
+    );
+
+    let vec = vec![tween_t, tween_r];
+
+    Tracks::new(vec)
+}
+
 impl Rotate {
     pub fn key_update(
         &self,
+        mut commands: Commands,
         keycode: &Res<Input<KeyCode>>,
         state: &mut UIState,
         transform: &mut bevy::prelude::Transform,
@@ -71,23 +121,74 @@ impl Rotate {
         let angle = 15.0_f32.to_radians();
         if keycode.just_pressed(KeyCode::Y) && shift {
             let angle = Quat::from_rotation_y(-angle);
-            transform.rotate_around(Vec3::ZERO, angle);
+            let track = roatate_around_animation(
+                transform.translation,
+                transform.rotation,
+                Vec3::ZERO,
+                angle,
+                Duration::from_millis(250),
+            );
+
+            commands.entity(camera).insert(Animator::new(track));
         } else if shift && keycode.just_pressed(KeyCode::X) {
             let angle = Quat::from_rotation_x(-angle);
-            transform.rotate_around(Vec3::ZERO, angle);
+
+            let track = roatate_around_animation(
+                transform.translation,
+                transform.rotation,
+                Vec3::ZERO,
+                angle,
+                Duration::from_millis(250),
+            );
+
+            commands.entity(camera).insert(Animator::new(track));
         } else if shift && keycode.just_pressed(KeyCode::Z) {
             let angle = Quat::from_rotation_z(-angle);
-            transform.rotate_around(Vec3::ZERO, angle);
+            let track = roatate_around_animation(
+                transform.translation,
+                transform.rotation,
+                Vec3::ZERO,
+                angle,
+                Duration::from_millis(250),
+            );
+
+            commands.entity(camera).insert(Animator::new(track));
         } else if keycode.just_pressed(KeyCode::Z) {
             let angle = Quat::from_rotation_z(angle);
-            transform.rotate_around(Vec3::ZERO, -angle);
+            let track = roatate_around_animation(
+                transform.translation,
+                transform.rotation,
+                Vec3::ZERO,
+                angle,
+                Duration::from_millis(250),
+            );
+
+            commands.entity(camera).insert(Animator::new(track));
         } else if keycode.just_pressed(KeyCode::X) {
             let angle = Quat::from_rotation_x(angle);
-            transform.rotate_around(Vec3::ZERO, -angle);
+            let track = roatate_around_animation(
+                transform.translation,
+                transform.rotation,
+                Vec3::ZERO,
+                angle,
+                Duration::from_millis(250),
+            );
+
+            commands.entity(camera).insert(Animator::new(track));
         } else if keycode.just_pressed(KeyCode::Y) {
             let angle = Quat::from_rotation_y(angle);
-            transform.rotate_around(Vec3::ZERO, -angle);
-        } else if keycode.just_pressed(KeyCode::Back) {
+            let track = roatate_around_animation(
+                transform.translation,
+                transform.rotation,
+                Vec3::ZERO,
+                angle,
+                Duration::from_millis(250),
+            );
+
+            commands.entity(camera).insert(Animator::new(track));
+        } else if keycode.just_pressed(KeyCode::T) {
+            state.mode = Modes::Camera(CameraModes::Transform(Transform));
+        } else if keycode.any_just_pressed([KeyCode::Back, KeyCode::Escape]) {
             state.mode = Modes::Camera(CameraModes::Selection(CameraSelection));
         }
     }

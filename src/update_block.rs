@@ -1,8 +1,11 @@
 use std::time::Duration;
 
 use bevy::prelude::*;
-use bevy_tweening::{lens::TransformPositionLens, Animator, AnimatorState, EaseFunction, Tween};
-use rand::Rng;
+use bevy_tweening::{
+    lens::{TransformPositionLens, TransformRotationLens},
+    Animator, AnimatorState, EaseFunction, Tracks, Tween,
+};
+use rand::{thread_rng, Rng};
 
 use crate::{
     grid_master::GridMaster, outline::make_outline_block, spawn_block::spawn_from_mesh, Block,
@@ -11,7 +14,7 @@ use crate::{
 
 pub fn update_block(
     mut commands: Commands,
-    mut query: Query<(Entity, &Transform, &mut Block)>,
+    mut query: Query<(Entity, &mut Transform, &mut Block)>,
     mut grid_master: ResMut<GridMaster>,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
@@ -28,7 +31,7 @@ pub fn update_block(
                     block.state = crate::BlockState::Animating;
                     let n = block.next_location.as_ref().unwrap();
 
-                    let animation = Tween::new(
+                    let t = Tween::new(
                         EaseFunction::QuadraticOut,
                         Duration::from_secs(1),
                         TransformPositionLens {
@@ -36,9 +39,21 @@ pub fn update_block(
                             end: n.into(),
                         },
                     );
+
+                    let r = Tween::new(
+                        EaseFunction::QuadraticOut,
+                        Duration::from_secs(1),
+                        TransformRotationLens {
+                            start: transform.rotation,
+                            end: random_rotation() * transform.rotation,
+                        },
+                    );
+
+                    let tracks = Tracks::new(vec![t, r]);
+
                     commands
                         .entity(entity)
-                        .insert(Animator::new(animation).with_state(AnimatorState::Playing));
+                        .insert(Animator::new(tracks).with_state(AnimatorState::Playing));
                 };
             }
             BlockState::Animating => {
@@ -56,5 +71,15 @@ pub fn update_block(
                 }
             }
         }
+    }
+}
+
+fn random_rotation() -> Quat {
+    let rand = rand::thread_rng().gen_range(1..3);
+    match rand {
+        1 => Quat::from_rotation_y(90.0_f32.to_radians()),
+        2 => Quat::from_rotation_z(90.0_f32.to_radians()),
+        3 => Quat::from_rotation_x(90.0_f32.to_radians()),
+        _ => Quat::from_rotation_y(90.0_f32.to_radians()),
     }
 }
