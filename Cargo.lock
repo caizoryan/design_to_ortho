@@ -970,6 +970,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "bevy_tweening"
+version = "0.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b182c9cf812b0052a5a96f59b1be16400fa0717b26da2497e13d81947299c7fc"
+dependencies = [
+ "bevy",
+ "interpolation",
+]
+
+[[package]]
 name = "bevy_ui"
 version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1456,6 +1466,8 @@ dependencies = [
  "bevy",
  "bevy_egui",
  "bevy_panorbit_camera",
+ "bevy_tweening",
+ "grid 0.10.0",
  "rand",
 ]
 
@@ -1896,6 +1908,12 @@ checksum = "0634107a3a005070dd73e27e74ecb691a94e9e5ba7829f434db7fbf73a6b5c47"
 dependencies = [
  "no-std-compat",
 ]
+
+[[package]]
+name = "grid"
+version = "0.10.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "eec1c01eb1de97451ee0d60de7d81cf1e72aabefb021616027f3d1c3ec1c723c"
 
 [[package]]
 name = "guillotiere"
@@ -3194,7 +3212,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3540ec65df399929a04a485feb50144475735920cc47eaf8eba09c70b1df4055"
 dependencies = [
  "arrayvec",
- "grid",
+ "grid 0.9.0",
  "num-traits",
  "slotmap",
 ]

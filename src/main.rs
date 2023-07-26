@@ -1,6 +1,4 @@
-// - [ ] use that in egui to update the data
-// - [ ] in update block make sure you read the correct data from variables array
-
+mod grid;
 mod modes;
 mod outline;
 mod setup;
