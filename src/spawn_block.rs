@@ -29,7 +29,7 @@ fn spawn_grid(
                 d: 1. * SCALE,
             };
             if block.occupied {
-                if rand::thread_rng().gen::<bool>() {
+                if rand::thread_rng().gen::<f32>() > 0.2 {
                     commands
                         .spawn(PbrBundle {
                             mesh: meshes.add(Mesh::from(shape::Cube { size: 1. * SCALE })),
@@ -54,7 +54,7 @@ fn spawn_grid(
                         .spawn(PbrBundle {
                             mesh: meshes.add(get_outline_mesh(bounds)),
                             material: materials.add(StandardMaterial {
-                                base_color: Color::rgb(1.0, 0.0, 0.0),
+                                base_color: Color::rgb(0.0, 0.0, 0.0),
                                 emissive: Color::rgb(0.0, 0.0, 0.0),
                                 perceptual_roughness: 0.9,
                                 ..default()

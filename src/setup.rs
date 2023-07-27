@@ -13,10 +13,10 @@ pub struct PlisCamera;
 
 pub fn setup(mut commands: Commands) {
     commands.spawn(DirectionalLightBundle {
-        transform: Transform::from_xyz(50.0, 150.0, 100.0),
+        transform: Transform::from_xyz(50.0, 150.0, 100.0).looking_at(Vec3::ZERO, Vec3::Y),
         directional_light: DirectionalLight {
             shadows_enabled: true,
-            illuminance: 10000.0,
+            illuminance: 80000.0,
             ..Default::default()
         },
         ..Default::default()
