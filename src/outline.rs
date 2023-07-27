@@ -1,11 +1,11 @@
 use bevy::prelude::*;
 
-use crate::Bounds;
+use crate::{Bounds, SCALE};
 // make a block that will take Bounds as input and output a
 // series of meshes that create outline of a cuboid
 
 pub fn make_outline_block(bounds: &Bounds) -> Vec<Mesh> {
-    const OUTLINE_WIDTH: f32 = 0.01;
+    const OUTLINE_WIDTH: f32 = 0.05;
 
     // front top
     let c1 = (
@@ -13,12 +13,12 @@ pub fn make_outline_block(bounds: &Bounds) -> Vec<Mesh> {
             bounds.min.x,
             bounds.min.y - OUTLINE_WIDTH,
             bounds.max.z + OUTLINE_WIDTH,
-        ) * 3.,
+        ),
         Vec3::new(
             bounds.max.x,
             bounds.min.y + OUTLINE_WIDTH,
             bounds.max.z - OUTLINE_WIDTH,
-        ) * 3.,
+        ),
     );
 
     // back top
@@ -27,12 +27,12 @@ pub fn make_outline_block(bounds: &Bounds) -> Vec<Mesh> {
             bounds.min.x,
             bounds.min.y - OUTLINE_WIDTH,
             bounds.min.z + OUTLINE_WIDTH,
-        ) * 3.,
+        ),
         Vec3::new(
             bounds.max.x,
             bounds.min.y + OUTLINE_WIDTH,
             bounds.min.z - OUTLINE_WIDTH,
-        ) * 3.,
+        ),
     );
 
     // front bottom
@@ -41,12 +41,12 @@ pub fn make_outline_block(bounds: &Bounds) -> Vec<Mesh> {
             bounds.min.x,
             bounds.max.y - OUTLINE_WIDTH,
             bounds.max.z + OUTLINE_WIDTH,
-        ) * 3.,
+        ),
         Vec3::new(
             bounds.max.x,
             bounds.max.y + OUTLINE_WIDTH,
             bounds.max.z - OUTLINE_WIDTH,
-        ) * 3.,
+        ),
     );
 
     // back bottom
@@ -55,12 +55,12 @@ pub fn make_outline_block(bounds: &Bounds) -> Vec<Mesh> {
             bounds.min.x,
             bounds.max.y - OUTLINE_WIDTH,
             bounds.min.z + OUTLINE_WIDTH,
-        ) * 3.,
+        ),
         Vec3::new(
             bounds.max.x,
             bounds.max.y + OUTLINE_WIDTH,
             bounds.min.z - OUTLINE_WIDTH,
-        ) * 3.,
+        ),
     );
 
     // left top
@@ -69,12 +69,12 @@ pub fn make_outline_block(bounds: &Bounds) -> Vec<Mesh> {
             bounds.min.x - OUTLINE_WIDTH,
             bounds.max.y + OUTLINE_WIDTH,
             bounds.min.z,
-        ) * 3.,
+        ),
         Vec3::new(
             bounds.min.x + OUTLINE_WIDTH,
             bounds.max.y - OUTLINE_WIDTH,
             bounds.max.z,
-        ) * 3.,
+        ),
     );
     // left bottom
     let c6 = (
@@ -82,12 +82,12 @@ pub fn make_outline_block(bounds: &Bounds) -> Vec<Mesh> {
             bounds.min.x - OUTLINE_WIDTH,
             bounds.min.y + OUTLINE_WIDTH,
             bounds.min.z,
-        ) * 3.,
+        ),
         Vec3::new(
             bounds.min.x + OUTLINE_WIDTH,
             bounds.min.y - OUTLINE_WIDTH,
             bounds.max.z,
-        ) * 3.,
+        ),
     );
     // right top
     let c7 = (
@@ -95,12 +95,12 @@ pub fn make_outline_block(bounds: &Bounds) -> Vec<Mesh> {
             bounds.max.x - OUTLINE_WIDTH,
             bounds.max.y + OUTLINE_WIDTH,
             bounds.min.z,
-        ) * 3.,
+        ),
         Vec3::new(
             bounds.max.x + OUTLINE_WIDTH,
             bounds.max.y - OUTLINE_WIDTH,
             bounds.max.z,
-        ) * 3.,
+        ),
     );
 
     // right bottom
@@ -109,12 +109,12 @@ pub fn make_outline_block(bounds: &Bounds) -> Vec<Mesh> {
             bounds.max.x - OUTLINE_WIDTH,
             bounds.min.y + OUTLINE_WIDTH,
             bounds.min.z,
-        ) * 3.,
+        ),
         Vec3::new(
             bounds.max.x + OUTLINE_WIDTH,
             bounds.min.y - OUTLINE_WIDTH,
             bounds.max.z,
-        ) * 3.,
+        ),
     );
 
     // left front edge
@@ -123,12 +123,12 @@ pub fn make_outline_block(bounds: &Bounds) -> Vec<Mesh> {
             bounds.min.x - OUTLINE_WIDTH,
             bounds.min.y,
             bounds.max.z + OUTLINE_WIDTH,
-        ) * 3.,
+        ),
         Vec3::new(
             bounds.min.x + OUTLINE_WIDTH,
             bounds.max.y,
             bounds.max.z - OUTLINE_WIDTH,
-        ) * 3.,
+        ),
     );
 
     // left back edge
@@ -137,12 +137,12 @@ pub fn make_outline_block(bounds: &Bounds) -> Vec<Mesh> {
             bounds.min.x - OUTLINE_WIDTH,
             bounds.min.y,
             bounds.min.z + OUTLINE_WIDTH,
-        ) * 3.,
+        ),
         Vec3::new(
             bounds.min.x + OUTLINE_WIDTH,
             bounds.max.y,
             bounds.min.z - OUTLINE_WIDTH,
-        ) * 3.,
+        ),
     );
 
     // right front edge
@@ -151,12 +151,12 @@ pub fn make_outline_block(bounds: &Bounds) -> Vec<Mesh> {
             bounds.max.x - OUTLINE_WIDTH,
             bounds.min.y,
             bounds.max.z + OUTLINE_WIDTH,
-        ) * 3.,
+        ),
         Vec3::new(
             bounds.max.x + OUTLINE_WIDTH,
             bounds.max.y,
             bounds.max.z - OUTLINE_WIDTH,
-        ) * 3.,
+        ),
     );
 
     // right back edge
@@ -165,12 +165,12 @@ pub fn make_outline_block(bounds: &Bounds) -> Vec<Mesh> {
             bounds.max.x - OUTLINE_WIDTH,
             bounds.min.y,
             bounds.min.z + OUTLINE_WIDTH,
-        ) * 3.,
+        ),
         Vec3::new(
             bounds.max.x + OUTLINE_WIDTH,
             bounds.max.y,
             bounds.min.z - OUTLINE_WIDTH,
-        ) * 3.,
+        ),
     );
 
     let mut v = Vec::new();

@@ -5,103 +5,75 @@ use bevy_tweening::{lens::TransformPositionLens, Animator, AnimatorState, EaseFu
 use rand::Rng;
 
 use crate::{
-    grid_master::GridMaster, make_outline_block, Block, BlockState, ChunkState, ChunkStates,
-    DeleteMeDaddy, Position, Rect, SCALE,
+    combined::combine_meshes,
+    grid_master::{GridDaddy, GridMaster},
+    make_outline_block, Block, BlockState, Bounds, ChunkState, ChunkStates, DeleteMeDaddy,
+    Position, Rect, SCALE,
 };
 
-fn _spawn_block(
-    commands: &mut Commands,
-    meshes: &mut ResMut<Assets<Mesh>>,
-    materials: &mut ResMut<Assets<StandardMaterial>>,
-    chunk: &ChunkState,
-    i: usize,
+fn spawn_grid(
+    mut commands: &mut Commands,
+    mut meshes: &mut Assets<Mesh>,
+    mut materials: &mut Assets<StandardMaterial>,
+    grid_master: &GridMaster,
 ) {
-    let c = ChunkState {
-        playing: true,
-        bounds: Rect {
-            x: -1.,
-            y: -1.,
-            w: 2.,
-            h: 4.,
-        }
-        .into(),
-    };
+    for i in 0..grid_master.grid.cols() {
+        let mut col = 0;
 
-    commands.spawn(PbrBundle {
-        mesh: meshes.add(Mesh::from(shape::Cube {
-            size: rand::thread_rng().gen_range(0.01..0.5),
-        })),
-        material: materials.add(StandardMaterial {
-            reflectance: 0.1,
-            ..default()
-        }),
-        transform: Transform::from_translation(Vec3::new(0.0, 10.0, 0.0)),
-        ..default()
-    });
+        grid_master.grid.iter_col(i).for_each(|block| {
+            let bounds = Rect {
+                x: 0.,
+                y: 0.,
+                w: 1. * SCALE,
+                h: 1. * SCALE,
+                d: 1. * SCALE,
+            };
+            if block.occupied {
+                commands
+                    .spawn(PbrBundle {
+                        mesh: meshes.add(get_outline_mesh(bounds)),
+                        material: materials.add(StandardMaterial {
+                            base_color: Color::rgb(1.0, 0.0, 0.0),
+                            emissive: Color::rgb(0.0, 0.0, 0.0),
+                            perceptual_roughness: 0.9,
+                            ..default()
+                        }),
+                        transform: Transform::from_translation(
+                            Position(col, i, grid_master.layer).into(),
+                        ),
+                        ..default()
+                    })
+                    .insert(Block {
+                        cur_location: Position(col, i, grid_master.layer),
+                        next_location: None,
+                        state: BlockState::Idle,
+                    });
+            }
+            col += 1;
+        })
+    }
 }
 
 pub fn init_blocks(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
-    grid_master: Res<GridMaster>,
+    grid_master: Res<GridDaddy>,
 ) {
-    let mut positions: Vec<Position> = Vec::new();
-
-    for i in 0..grid_master.grid.cols() {
-        let mut col = 0;
-
-        grid_master.grid.iter_col(i).for_each(|block| {
-            if block.occupied {
-                positions.push(Position(col, i));
-            }
-            col += 1;
-        })
+    for grid in grid_master.grids.iter() {
+        spawn_grid(&mut commands, &mut meshes, &mut materials, grid);
     }
-
-    positions.iter().for_each(|pos| {
-        commands
-            .spawn(PbrBundle {
-                mesh: meshes.add(Mesh::from(shape::Cube { size: 1.1 * SCALE })),
-                material: materials.add(StandardMaterial {
-                    base_color: Color::rgb(1.0, 0.0, 0.0),
-                    emissive: Color::rgb(0.0, 0.0, 0.0),
-                    perceptual_roughness: 0.9,
-                    ..default()
-                }),
-                transform: Transform::from_translation(Position(pos.0, pos.1).into()),
-                ..default()
-            })
-            .insert(Block {
-                cur_location: Position(pos.0, pos.1),
-                next_location: None,
-                state: BlockState::Idle,
-            });
-    })
 }
 
-pub fn init_blocks_(
-    mut commands: Commands,
-    mut meshes: ResMut<Assets<Mesh>>,
-    mut materials: ResMut<Assets<StandardMaterial>>,
-    chunk_states: Res<ChunkStates>,
-) {
-    let chunks = &chunk_states.0.clone();
-    for _ in 0..4 {
-        let mut index = 0;
-        for chunk in chunks.iter() {
-            _spawn_block(&mut commands, &mut meshes, &mut materials, chunk, index);
-            index += 1;
-        }
-    }
+pub fn get_outline_mesh(bounds: Rect) -> Mesh {
+    let b = bounds.into();
+    let v = make_outline_block(&b);
+    let mut vt = Vec::new();
+    v.iter()
+        .for_each(|_v| vt.push(Transform::from_xyz(0., 0., 0.)));
 
-    let mut b = chunks[0].bounds.clone();
-    b.min.z = -0.3;
-    b.max.z = 0.3;
-
-    let vec = make_outline_block(&b);
-
-    spawn_from_mesh(&mut commands, vec, &mut meshes, &mut materials);
+    let combined = combine_meshes(&v, &vt, true, false, true, false);
+    combined
 }
 
 pub fn spawn_from_mesh(

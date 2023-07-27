@@ -17,6 +17,7 @@ pub struct Clock {
     pub dispatch: bool,
 }
 
+#[allow(dead_code)]
 impl Clock {
     pub fn new() -> Self {
         Clock {
@@ -42,25 +43,27 @@ impl Clock {
         self.time = 0.0;
     }
 }
+
+#[derive(Resource)]
+pub struct GridDaddy {
+    pub grids: Vec<GridMaster>,
+}
+
 pub struct GridBlock {
     pub occupied: bool,
 }
 
-#[derive(Resource)]
 pub struct GridMaster {
     pub grid: Grid<GridBlock>,
     pub clock: Clock,
+    pub layer: usize,
 }
 
 pub enum Directions {
     Left,
-    TopLeft,
     Top,
-    TopRight,
     Right,
-    BottomRight,
     Bottom,
-    BottomLeft,
 }
 
 impl Default for GridBlock {
@@ -70,7 +73,7 @@ impl Default for GridBlock {
 }
 
 impl GridMaster {
-    pub fn new(rows: usize, cols: usize) -> Self {
+    pub fn new(rows: usize, cols: usize, layer: usize) -> Self {
         let grid = Grid::new(rows, cols);
         Self {
             grid,
@@ -79,6 +82,7 @@ impl GridMaster {
                 interval: 0.1,
                 dispatch: false,
             },
+            layer,
         }
     }
 
@@ -96,7 +100,7 @@ impl GridMaster {
                 let random_index = rng.gen_range(0..available_positions.len());
                 let (x, y) = available_positions[random_index];
                 self.grid.get_mut(x, y).unwrap().occupied = true;
-                Some(Position(x, y))
+                Some(Position(x, y, self.layer))
             }
         }
     }
@@ -113,13 +117,13 @@ impl GridMaster {
     fn check_neighbour(&self, x: usize, y: usize, direction: Directions) -> bool {
         match direction {
             Directions::Left => self.check_available(x - 1, y),
-            Directions::TopLeft => self.check_available(x - 1, y + 1),
+            // Directions::TopLeft => self.check_available(x - 1, y + 1),
             Directions::Top => self.check_available(x, y + 1),
-            Directions::TopRight => self.check_available(x + 1, y + 1),
+            // Directions::TopRight => self.check_available(x + 1, y + 1),
             Directions::Right => self.check_available(x + 1, y),
-            Directions::BottomRight => self.check_available(x + 1, y - 1),
+            // Directions::BottomRight => self.check_available(x + 1, y - 1),
             Directions::Bottom => self.check_available(x, y - 1),
-            Directions::BottomLeft => self.check_available(x - 1, y - 1),
+            // Directions::BottomLeft => self.check_available(x - 1, y - 1),
         }
     }
 
