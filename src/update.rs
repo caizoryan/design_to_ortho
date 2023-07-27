@@ -5,6 +5,7 @@ use bevy_egui::{
 };
 
 use crate::{
+    grid_master::{self, GridDaddy},
     modes::{CameraModes, CameraSelection, EditBlockModes, Modes},
     setup::PlisCamera,
     Bounds, ChunkStates, UIState,
@@ -65,9 +66,12 @@ pub fn update(
     mut state: ResMut<UIState>,
     mut query: Query<(Entity, &mut Projection)>,
     mut transform: Query<&mut Transform, With<PlisCamera>>,
+    mut grid_daddy: ResMut<GridDaddy>,
     keycode: Res<Input<KeyCode>>,
 ) {
     let ctx = contexts.ctx_mut();
+
+    let grid_daddy = grid_daddy.as_mut();
 
     let mut q = query.single_mut();
     let camera = q.0;

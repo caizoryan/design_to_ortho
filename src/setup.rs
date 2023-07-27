@@ -16,7 +16,7 @@ pub fn setup(mut commands: Commands) {
         transform: Transform::from_xyz(50.0, 150.0, 100.0),
         directional_light: DirectionalLight {
             shadows_enabled: true,
-            illuminance: 10000.0,
+            illuminance: 30000.0,
             ..Default::default()
         },
         ..Default::default()

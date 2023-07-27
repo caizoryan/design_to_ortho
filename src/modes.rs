@@ -10,7 +10,7 @@ use bevy_tweening::{
     Animator, EaseFunction, EaseMethod, Tracks, Tween,
 };
 
-use crate::{UIState, SCALE};
+use crate::UIState;
 
 #[derive(Clone, Debug)]
 pub enum Modes {
@@ -86,7 +86,7 @@ fn roatate_around_animation(
     let (t, r) = translate_rotate_around(cur_translation, cur_rotation, Vec3::ZERO, rotation);
     let tween_t = Tween::new(
         EaseFunction::QuadraticOut,
-        Duration::from_millis(250),
+        Duration::from_millis(50),
         TransformPositionLens {
             start: cur_translation,
             end: t,
@@ -95,7 +95,7 @@ fn roatate_around_animation(
 
     let tween_r = Tween::new(
         EaseFunction::QuadraticOut,
-        Duration::from_millis(250),
+        Duration::from_millis(50),
         TransformRotationLens {
             start: cur_rotation,
             end: r,
@@ -126,7 +126,7 @@ impl Rotate {
                 transform.rotation,
                 Vec3::ZERO,
                 angle,
-                Duration::from_millis(250),
+                Duration::from_millis(50),
             );
 
             commands.entity(camera).insert(Animator::new(track));
@@ -138,7 +138,7 @@ impl Rotate {
                 transform.rotation,
                 Vec3::ZERO,
                 angle,
-                Duration::from_millis(250),
+                Duration::from_millis(50),
             );
 
             commands.entity(camera).insert(Animator::new(track));
@@ -149,7 +149,7 @@ impl Rotate {
                 transform.rotation,
                 Vec3::ZERO,
                 angle,
-                Duration::from_millis(250),
+                Duration::from_millis(50),
             );
 
             commands.entity(camera).insert(Animator::new(track));
@@ -160,7 +160,7 @@ impl Rotate {
                 transform.rotation,
                 Vec3::ZERO,
                 angle,
-                Duration::from_millis(250),
+                Duration::from_millis(50),
             );
 
             commands.entity(camera).insert(Animator::new(track));
@@ -171,7 +171,7 @@ impl Rotate {
                 transform.rotation,
                 Vec3::ZERO,
                 angle,
-                Duration::from_millis(250),
+                Duration::from_millis(50),
             );
 
             commands.entity(camera).insert(Animator::new(track));
@@ -182,7 +182,7 @@ impl Rotate {
                 transform.rotation,
                 Vec3::ZERO,
                 angle,
-                Duration::from_millis(250),
+                Duration::from_millis(50),
             );
 
             commands.entity(camera).insert(Animator::new(track));
@@ -210,22 +210,22 @@ impl Transform {
         projection: &mut Projection,
     ) {
         if keycode.just_pressed(KeyCode::X) && keycode.pressed(KeyCode::ShiftLeft) {
-            transform.translation.x -= 1.0 * SCALE;
+            transform.translation.x -= 1.0;
         } else if keycode.just_pressed(KeyCode::Y) && keycode.pressed(KeyCode::ShiftLeft) {
-            transform.translation.y -= 1.0 * SCALE;
+            transform.translation.y -= 1.0;
         } else if keycode.just_pressed(KeyCode::Z) && keycode.pressed(KeyCode::ShiftLeft) {
             if let Projection::Orthographic(ref mut orthographic) = *projection {
-                orthographic.scale -= 1. * SCALE;
+                orthographic.scale -= 1.;
             }
         } else if keycode.just_pressed(KeyCode::X) {
-            transform.translation.x += 1.0 * SCALE;
+            transform.translation.x += 1.0;
         } else if keycode.just_pressed(KeyCode::Y) {
-            transform.translation.y += 1.0 * SCALE;
+            transform.translation.y += 1.0;
         } else if keycode.just_pressed(KeyCode::Z) {
             if let Projection::Orthographic(ref mut orthographic) = *projection {
-                orthographic.scale += 1. * SCALE;
+                orthographic.scale += 1.;
             }
-        } else if keycode.just_pressed(KeyCode::B) {
+        } else if keycode.any_just_pressed([KeyCode::Back, KeyCode::Escape]) {
             state.mode = Modes::Camera(CameraModes::Selection(CameraSelection));
         } else if keycode.just_pressed(KeyCode::R) {
             state.mode = Modes::Camera(CameraModes::Rotate(Rotate));

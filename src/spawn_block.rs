@@ -5,8 +5,10 @@ use bevy_tweening::{lens::TransformPositionLens, Animator, AnimatorState, EaseFu
 use rand::Rng;
 
 use crate::{
-    grid_master::GridMaster, make_outline_block, Block, BlockState, ChunkState, ChunkStates,
-    DeleteMeDaddy, Position, Rect, SCALE,
+    combined_mesh::{self, combine_meshes},
+    grid_master::{GridDaddy, GridMaster},
+    make_outline_block, Block, BlockState, Bounds, ChunkState, ChunkStates, DeleteMeDaddy,
+    Position, Rect,
 };
 
 fn _spawn_block(
@@ -40,47 +42,88 @@ fn _spawn_block(
     });
 }
 
-pub fn init_blocks(
-    mut commands: Commands,
-    mut meshes: ResMut<Assets<Mesh>>,
-    mut materials: ResMut<Assets<StandardMaterial>>,
-    grid_master: Res<GridMaster>,
-) {
-    let mut positions: Vec<Position> = Vec::new();
+pub fn archiv_making_outline_block() {
+    let bounds: Bounds = Rect {
+        x: 10.,
+        y: -10.,
+        w: 1.,
+        h: 1.,
+    }
+    .into();
+    let try_meshes = make_outline_block(&bounds);
+    let mut transforms = Vec::new();
+    for _i in 0..try_meshes.len() {
+        transforms.push(Transform::from_xyz(0., 0., 0.))
+    }
+    let try_mesh = combine_meshes(&try_meshes, &transforms, true, false, true, false);
 
+    // commands.spawn(PbrBundle {
+    //     mesh: meshes.add(try_mesh),
+    //     material: materials.add(StandardMaterial {
+    //         base_color: Color::rgb(1.0, 1.0, 0.0),
+    //         perceptual_roughness: 0.9,
+    //         ..default()
+    //     }),
+    //     transform: Transform::from_translation(Vec3::new(10.0, 10.0, 2.0)),
+    //     ..default()
+    // });
+}
+
+pub fn spawn_for_grid(
+    commands: &mut Commands,
+    meshes: &mut Assets<Mesh>,
+    materials: &mut Assets<StandardMaterial>,
+    grid_master: &GridMaster,
+) {
     for i in 0..grid_master.grid.cols() {
         let mut col = 0;
-
         grid_master.grid.iter_col(i).for_each(|block| {
             if block.occupied {
-                positions.push(Position(col, i));
+                commands
+                    .spawn(PbrBundle {
+                        mesh: meshes.add(Mesh::from(shape::Cube {
+                            size: 1.1 * grid_master.scale,
+                        })),
+                        material: materials.add(StandardMaterial {
+                            base_color: Color::rgb(1.0, 0.0, 0.0),
+                            emissive: Color::rgb(0.0, 0.0, 0.0),
+                            perceptual_roughness: 0.9,
+                            ..default()
+                        }),
+                        transform: Transform::from_translation(block.init_position(
+                            col as f32,
+                            i as f32,
+                            grid_master.scale,
+                            grid_master.layer,
+                            grid_master.x_offset,
+                            grid_master.y_offset,
+                        )),
+                        ..default()
+                    })
+                    .insert(Block {
+                        cur_location: block.position,
+                        next_location: None,
+                        state: BlockState::Idle,
+                    });
             }
             col += 1;
         })
     }
-
-    positions.iter().for_each(|pos| {
-        commands
-            .spawn(PbrBundle {
-                mesh: meshes.add(Mesh::from(shape::Cube { size: 1.1 * SCALE })),
-                material: materials.add(StandardMaterial {
-                    base_color: Color::rgb(1.0, 0.0, 0.0),
-                    emissive: Color::rgb(0.0, 0.0, 0.0),
-                    perceptual_roughness: 0.9,
-                    ..default()
-                }),
-                transform: Transform::from_translation(Position(pos.0, pos.1).into()),
-                ..default()
-            })
-            .insert(Block {
-                cur_location: Position(pos.0, pos.1),
-                next_location: None,
-                state: BlockState::Idle,
-            });
-    })
 }
 
-pub fn init_blocks_(
+pub fn init_blocks(
+    mut commands: Commands,
+    mut meshes: ResMut<Assets<Mesh>>,
+    mut materials: ResMut<Assets<StandardMaterial>>,
+    grid_daddy: Res<GridDaddy>,
+) {
+    grid_daddy
+        .grids
+        .iter()
+        .for_each(|grid| spawn_for_grid(&mut commands, &mut meshes, &mut materials, grid))
+}
+
+pub fn init_blocks_deprecated(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
