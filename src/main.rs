@@ -7,6 +7,7 @@ mod spawn_block;
 mod update;
 mod update_block;
 
+use bevy_image_export::{ImageExportBundle, ImageExportPlugin, ImageExportSource};
 use bevy_tweening::TweeningPlugin;
 use grid_master::{GridDaddy, GridMaster};
 use modes::Modes;
@@ -17,9 +18,33 @@ use spawn_block::init_blocks;
 use update::update;
 use update_block::update_block;
 
+#[derive(Resource)]
+pub struct PlisImage {
+    pub image: Option<Handle<Image>>,
+}
+
+fn screenshot_on_spacebar(
+    input: Res<Input<KeyCode>>,
+    image: Res<Assets<Image>>,
+    handle: Res<PlisImage>,
+) {
+    let x = image.get(handle.image.as_ref().unwrap()).unwrap().clone();
+    let y = x.try_into_dynamic().unwrap();
+    let img = y.to_rgb8();
+
+    if input.just_pressed(KeyCode::Space) {
+        // thread::spawn(move || {
+        let _ = img.save("./screenshot.png");
+        // });
+    }
+    println!();
+}
+
 use bevy::{
-    core_pipeline::experimental::taa::TemporalAntiAliasPlugin, prelude::*,
+    core_pipeline::experimental::taa::TemporalAntiAliasPlugin,
+    prelude::*,
     render::view::screenshot::ScreenshotManager,
+    window::{PrimaryWindow, WindowMode, WindowResolution},
 };
 use bevy_egui::EguiPlugin;
 
@@ -131,22 +156,37 @@ fn init_grid(rows: usize, cols: usize, layer: usize) -> GridMaster {
 }
 
 fn main() {
+    let export_plugin = ImageExportPlugin::default();
+    let export_threads = export_plugin.threads.clone();
     App::new()
         .insert_resource(AmbientLight {
             brightness: 3.0,
             ..default()
         })
         .insert_resource(UIState { mode: Modes::Home })
+        // .insert_resource(PlisImage { image: None })
         .insert_resource(multiple_grid())
-        .insert_resource(ClearColor(Color::rgb(1.0, 1.0, 1.0)))
-        .add_plugins(DefaultPlugins)
+        // .insert_resource(ClearColor(Color::rgb(1.0, 1.0, 1.0)))
+        .add_plugins((
+            DefaultPlugins.set(WindowPlugin {
+                primary_window: Some(Window {
+                    resolution: WindowResolution::new(768.0, 768.0).with_scale_factor_override(1.0),
+                    ..default()
+                }),
+                ..default()
+            }),
+            export_plugin,
+        ))
         .add_plugins(TweeningPlugin)
         .add_plugins(TemporalAntiAliasPlugin)
         .add_plugins(EguiPlugin)
         .add_systems(Startup, setup)
         .add_systems(Startup, init_blocks)
+        // .add_systems(Update, screenshot_on_spacebar)
         .add_systems(FixedUpdate, update_block)
         .add_systems(Update, update)
         .insert_resource(FixedTime::new_from_secs(0.1))
         .run();
+
+    export_threads.finish();
 }

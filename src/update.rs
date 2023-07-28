@@ -63,7 +63,7 @@ pub fn update(
     mut contexts: EguiContexts,
     mut commands: Commands,
     mut state: ResMut<UIState>,
-    mut query: Query<(Entity, &mut Projection)>,
+    mut query: Query<(Entity, &mut Projection), With<PlisCamera>>,
     mut transform: Query<&mut Transform, With<PlisCamera>>,
     keycode: Res<Input<KeyCode>>,
 ) {
