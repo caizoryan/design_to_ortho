@@ -17,7 +17,10 @@ use spawn_block::init_blocks;
 use update::update;
 use update_block::update_block;
 
-use bevy::{core_pipeline::experimental::taa::TemporalAntiAliasPlugin, prelude::*};
+use bevy::{
+    core_pipeline::experimental::taa::TemporalAntiAliasPlugin, prelude::*,
+    render::view::screenshot::ScreenshotManager,
+};
 use bevy_egui::EguiPlugin;
 
 #[derive(Resource)]
