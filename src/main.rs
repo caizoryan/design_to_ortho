@@ -160,7 +160,7 @@ fn main() {
     let export_threads = export_plugin.threads.clone();
     App::new()
         .insert_resource(AmbientLight {
-            brightness: 5.0,
+            brightness: 3.0,
             ..default()
         })
         .insert_resource(UIState { mode: Modes::Home })
