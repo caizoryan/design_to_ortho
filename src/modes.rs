@@ -70,10 +70,11 @@ impl CameraSelection {
                 ui.label("Camera Rotation");
                 ui.end_row();
                 ui.label(format!(
-                    "x: {:.2}, y: {:.2}, z: {:.2}",
+                    "x: {:.2}, y: {:.2}, z: {:.2}, w: {:.2}",
                     camera_transform.rotation.x,
                     camera_transform.rotation.y,
                     camera_transform.rotation.z,
+                    camera_transform.rotation.w
                 ));
             })
         });

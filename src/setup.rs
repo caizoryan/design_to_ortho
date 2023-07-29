@@ -56,21 +56,11 @@ pub fn setup(
         images.add(export_texture)
     };
 
-    commands.spawn(DirectionalLightBundle {
-        transform: Transform::from_xyz(50.0, 150.0, 100.0).looking_at(Vec3::ZERO, Vec3::Y),
-        directional_light: DirectionalLight {
-            shadows_enabled: true,
-            illuminance: 80000.0,
-            ..Default::default()
-        },
-        ..Default::default()
-    });
-
     // camera
     commands
         .spawn((Camera3dBundle {
             projection: OrthographicProjection {
-                scale: 50.0,
+                scale: 150.0,
                 scaling_mode: ScalingMode::FixedVertical(1.0),
                 ..default()
             }
@@ -82,8 +72,8 @@ pub fn setup(
                 ..Default::default()
             },
             transform: Transform {
-                translation: Vec3::new(120.48, 37.79, 105.33),
-                rotation: Quat::from_xyzw(0.11, -0.41, -0.24, 1.),
+                translation: Vec3::new(625.46, 148.73, 420.69),
+                rotation: Quat::from_xyzw(-0.10, 0.37, 0.24, 0.89),
                 ..Default::default()
             },
 
@@ -97,36 +87,33 @@ pub fn setup(
             ..default()
         })
         .insert(TemporalAntiAliasBundle::default());
-    // .insert(PlisCamera);
-    // .insert(PanOrbitCamera::default());
-    //
 
-    let cube_size = 4.0;
-    let cube_handle = meshes.add(Mesh::from(shape::Box::new(cube_size, cube_size, cube_size)));
-
-    // This material has the texture that has been rendered.
-    let material_handle = materials.add(StandardMaterial {
-        base_color_texture: Some(output_texture_handle.clone()),
-        reflectance: 0.02,
-        unlit: false,
-        ..default()
+    commands.spawn(ImageExportBundle {
+        source: export_sources.add(output_texture_handle.into()),
+        settings: ImageExportSettings {
+            // Frames will be saved to "./out/[#####].png".
+            output_dir: "out".into(),
+            // Choose "exr" for HDR renders.
+            extension: "png".into(),
+        },
     });
 
-    // Main pass cube, with material containing the rendered first pass texture.
-    // commands.spawn((PbrBundle {
-    //     mesh: cube_handle,
-    //     material: material_handle,
-    //     transform: Transform::from_xyz(0.0, 0.0, 1.5)
-    //         .with_rotation(Quat::from_rotation_x(-PI / 5.0)),
-    //     ..default()
-    // },));
+    commands.spawn(DirectionalLightBundle {
+        transform: Transform::from_xyz(50.0, 150.0, 100.0).looking_at(Vec3::ZERO, Vec3::Y),
+        directional_light: DirectionalLight {
+            shadows_enabled: true,
+            illuminance: 80000.0,
+            ..Default::default()
+        },
+        ..Default::default()
+    });
 
     // camera
     commands
         .spawn((
             Camera3dBundle {
                 projection: OrthographicProjection {
-                    scale: 50.0,
+                    scale: 150.0,
                     scaling_mode: ScalingMode::FixedVertical(1.0),
                     far: 5000.0,
                     near: 0.0,
@@ -137,7 +124,7 @@ pub fn setup(
                     hdr: true,
                     ..Default::default()
                 },
-                transform: Transform::from_xyz(0.0, 0.0, 200.0).looking_at(Vec3::ZERO, Vec3::Y),
+                transform: Transform::from_xyz(0.0, 0.0, 800.0).looking_at(Vec3::ZERO, Vec3::Y),
                 ..Default::default()
             },
             // BloomSettings {
@@ -157,13 +144,4 @@ pub fn setup(
     // .insert(PanOrbitCamera::default());
     //
     //
-    commands.spawn(ImageExportBundle {
-        source: export_sources.add(output_texture_handle.into()),
-        settings: ImageExportSettings {
-            // Frames will be saved to "./out/[#####].png".
-            output_dir: "out".into(),
-            // Choose "exr" for HDR renders.
-            extension: "png".into(),
-        },
-    });
 }

@@ -124,7 +124,7 @@ pub struct Rect {
     pub d: f32,
 }
 
-pub const SCALE: f32 = 5.;
+pub const SCALE: f32 = 40.;
 
 impl Into<Bounds> for Rect {
     fn into(self) -> Bounds {
