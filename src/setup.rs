@@ -1,4 +1,4 @@
-use bevy_image_export::{ImageExportBundle, ImageExportSettings, ImageExportSource};
+// use bevy_image_export::{ImageExportBundle, ImageExportSettings, ImageExportSource};
 use std::f32::consts::PI;
 
 use bevy::{
@@ -15,6 +15,7 @@ use bevy::{
         },
     },
 };
+use bevy_image_export::{ImageExportBundle, ImageExportSettings, ImageExportSource};
 use bevy_panorbit_camera::PanOrbitCamera;
 
 use crate::PlisImage;
@@ -80,7 +81,12 @@ pub fn setup(
                 target: RenderTarget::Image(output_texture_handle.clone()),
                 ..Default::default()
             },
-            transform: Transform::from_xyz(0.0, 0.0, 100.0).looking_at(Vec3::ZERO, Vec3::Y),
+            transform: Transform {
+                translation: Vec3::new(120.48, 37.79, 105.33),
+                rotation: Quat::from_xyzw(0.11, -0.41, -0.24, 1.),
+                ..Default::default()
+            },
+
             ..Default::default()
         },))
         .insert(ScreenSpaceAmbientOcclusionBundle {
@@ -107,13 +113,13 @@ pub fn setup(
     });
 
     // Main pass cube, with material containing the rendered first pass texture.
-    commands.spawn((PbrBundle {
-        mesh: cube_handle,
-        material: material_handle,
-        transform: Transform::from_xyz(0.0, 0.0, 1.5)
-            .with_rotation(Quat::from_rotation_x(-PI / 5.0)),
-        ..default()
-    },));
+    // commands.spawn((PbrBundle {
+    //     mesh: cube_handle,
+    //     material: material_handle,
+    //     transform: Transform::from_xyz(0.0, 0.0, 1.5)
+    //         .with_rotation(Quat::from_rotation_x(-PI / 5.0)),
+    //     ..default()
+    // },));
 
     // camera
     commands
@@ -134,14 +140,14 @@ pub fn setup(
                 transform: Transform::from_xyz(0.0, 0.0, 200.0).looking_at(Vec3::ZERO, Vec3::Y),
                 ..Default::default()
             },
-            BloomSettings {
-                intensity: 0.18,
-                ..default()
-            },
+            // BloomSettings {
+            // intensity: 0.18,
+            // ..default()
+            // },
         ))
         .insert(ScreenSpaceAmbientOcclusionBundle {
             settings: ScreenSpaceAmbientOcclusionSettings {
-                quality_level: bevy::pbr::ScreenSpaceAmbientOcclusionQualityLevel::Ultra,
+                quality_level: bevy::pbr::ScreenSpaceAmbientOcclusionQualityLevel::Medium,
                 ..default()
             },
             ..default()

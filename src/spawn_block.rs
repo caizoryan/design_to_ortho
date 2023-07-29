@@ -29,47 +29,47 @@ fn spawn_grid(
                 d: 1. * SCALE,
             };
             if block.occupied {
-                if rand::thread_rng().gen::<f32>() > 0.2 {
-                    commands
-                        .spawn(PbrBundle {
-                            mesh: meshes.add(Mesh::from(shape::Cube { size: 1. * SCALE })),
-                            material: materials.add(StandardMaterial {
-                                base_color: Color::rgb(1.0, 0.0, 0.0),
-                                emissive: Color::rgb(0.0, 0.0, 0.0),
-                                perceptual_roughness: 0.9,
-                                ..default()
-                            }),
-                            transform: Transform::from_translation(
-                                Position(col, i, grid_master.layer).into(),
-                            ),
+                // if rand::thread_rng().gen::<f32>() > 0.2 {
+                commands
+                    .spawn(PbrBundle {
+                        mesh: meshes.add(Mesh::from(shape::Cube { size: 1. * SCALE })),
+                        material: materials.add(StandardMaterial {
+                            base_color: Color::rgb(1.0, 0.0, 0.0),
+                            emissive: Color::rgb(0.0, 0.0, 0.0),
+                            perceptual_roughness: 0.9,
                             ..default()
-                        })
-                        .insert(Block {
-                            cur_location: Position(col, i, grid_master.layer),
-                            next_location: None,
-                            state: BlockState::Idle,
-                        });
-                } else {
-                    commands
-                        .spawn(PbrBundle {
-                            mesh: meshes.add(get_outline_mesh(bounds)),
-                            material: materials.add(StandardMaterial {
-                                base_color: Color::rgb(0.0, 0.0, 0.0),
-                                emissive: Color::rgb(0.0, 0.0, 0.0),
-                                perceptual_roughness: 0.9,
-                                ..default()
-                            }),
-                            transform: Transform::from_translation(
-                                Position(col, i, grid_master.layer).into(),
-                            ),
-                            ..default()
-                        })
-                        .insert(Block {
-                            cur_location: Position(col, i, grid_master.layer),
-                            next_location: None,
-                            state: BlockState::Idle,
-                        });
-                }
+                        }),
+                        transform: Transform::from_translation(
+                            Position(col, i, grid_master.layer).into(),
+                        ),
+                        ..default()
+                    })
+                    .insert(Block {
+                        cur_location: Position(col, i, grid_master.layer),
+                        next_location: None,
+                        state: BlockState::Idle,
+                    });
+                // } else {
+                //     commands
+                //         .spawn(PbrBundle {
+                //             mesh: meshes.add(get_outline_mesh(bounds)),
+                //             material: materials.add(StandardMaterial {
+                //                 base_color: Color::rgb(0.0, 0.0, 0.0),
+                //                 emissive: Color::rgb(0.0, 0.0, 0.0),
+                //                 perceptual_roughness: 0.9,
+                //                 ..default()
+                //             }),
+                //             transform: Transform::from_translation(
+                //                 Position(col, i, grid_master.layer).into(),
+                //             ),
+                //             ..default()
+                //         })
+                //         .insert(Block {
+                //             cur_location: Position(col, i, grid_master.layer),
+                //             next_location: None,
+                //             state: BlockState::Idle,
+                //         });
+                // }
             }
             col += 1;
         })

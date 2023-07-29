@@ -29,7 +29,7 @@ fn handle_camera_mode(
 ) {
     match mode {
         CameraModes::Selection(s) => {
-            s.clone().ui(ctx);
+            s.clone().ui(ctx, transform);
             s.key_update(&keycode, &mut state);
         }
         CameraModes::Transform(t) => {

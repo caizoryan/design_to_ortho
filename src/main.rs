@@ -137,7 +137,7 @@ impl Into<Bounds> for Rect {
 
 fn multiple_grid() -> GridDaddy {
     let mut v = Vec::new();
-    for i in 0..1 {
+    for i in 0..3 {
         v.push(init_grid(4 + (5 - i), 10 + (5 - i), i * 2));
     }
 
@@ -148,7 +148,7 @@ fn init_grid(rows: usize, cols: usize, layer: usize) -> GridMaster {
     let mut my_g = GridMaster::new(rows, cols, layer);
     let mut rand = rand::thread_rng();
     my_g.grid.iter_mut().for_each(|el| {
-        if rand.gen::<f32>() < 0.4 {
+        if rand.gen::<f32>() < 0.1 {
             el.occupied = true;
         }
     });
@@ -166,7 +166,7 @@ fn main() {
         .insert_resource(UIState { mode: Modes::Home })
         // .insert_resource(PlisImage { image: None })
         .insert_resource(multiple_grid())
-        // .insert_resource(ClearColor(Color::rgb(1.0, 1.0, 1.0)))
+        .insert_resource(ClearColor(Color::rgb(1.0, 1.0, 1.0)))
         .add_plugins((
             DefaultPlugins.set(WindowPlugin {
                 primary_window: Some(Window {

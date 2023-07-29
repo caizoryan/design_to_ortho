@@ -55,10 +55,26 @@ impl CameraSelection {
             state.mode = Modes::Camera(CameraModes::Rotate(Rotate));
         }
     }
-    pub fn ui(self, ctx: &mut Context) {
+    pub fn ui(self, ctx: &mut Context, camera_transform: &bevy::prelude::Transform) {
         egui::Window::new("Selection Mode").show(ctx, |ui| {
             egui::Grid::new("").show(ui, |ui| {
-                ui.label("backspace to go back");
+                ui.label("Camera Position");
+                ui.end_row();
+                ui.label(format!(
+                    "x: {:.2}, y: {:.2}, z: {:.2}",
+                    camera_transform.translation.x,
+                    camera_transform.translation.y,
+                    camera_transform.translation.z
+                ));
+                ui.end_row();
+                ui.label("Camera Rotation");
+                ui.end_row();
+                ui.label(format!(
+                    "x: {:.2}, y: {:.2}, z: {:.2}",
+                    camera_transform.rotation.x,
+                    camera_transform.rotation.y,
+                    camera_transform.rotation.z,
+                ));
             })
         });
     }
