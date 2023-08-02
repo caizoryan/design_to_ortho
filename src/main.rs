@@ -13,7 +13,7 @@ use grid_master::{GridDaddy, GridMaster};
 use modes::Modes;
 use outline::make_outline_block;
 use rand::Rng;
-use setup::setup;
+use setup::{render_setup, setup};
 use spawn_block::init_blocks;
 use update::update;
 use update_block::update_block;
@@ -138,7 +138,7 @@ impl Into<Bounds> for Rect {
 fn multiple_grid() -> GridDaddy {
     let mut v = Vec::new();
     for i in 0..1 {
-        v.push(init_grid(9, 14, i));
+        v.push(init_grid(40, 8, i));
     }
 
     GridDaddy { grids: v }
@@ -182,6 +182,7 @@ fn main() {
         .add_plugins(EguiPlugin)
         .add_systems(Startup, setup)
         .add_systems(Startup, init_blocks)
+        .add_systems(Startup, render_setup)
         // .add_systems(Update, screenshot_on_spacebar)
         .add_systems(FixedUpdate, update_block)
         .add_systems(Update, update)
