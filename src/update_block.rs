@@ -77,9 +77,8 @@ pub fn update_block(
                             }
                             let tracks = Tracks::new(v);
 
-                            commands
-                                .entity(entity)
-                                .insert(Animator::new(tracks).with_state(AnimatorState::Playing));
+                            commands.entity(entity);
+                            // .insert(Animator::new(tracks).with_state(AnimatorState::Playing));
 
                             let loc = match block.next_location.is_some() {
                                 true => block.next_location.as_ref().unwrap().clone(),

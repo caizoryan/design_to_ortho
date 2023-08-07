@@ -17,7 +17,10 @@ use bevy::{
 };
 use bevy_image_export::{ImageExportBundle, ImageExportSettings, ImageExportSource};
 use bevy_panorbit_camera::PanOrbitCamera;
-use bevy_tweening::{lens::TransformPositionLens, Animator, EaseFunction, Tween};
+use bevy_tweening::{
+    lens::{TransformPositionLens, TransformRotationLens},
+    Animator, EaseFunction, Tracks, Tween,
+};
 
 use crate::PlisImage;
 #[derive(Component)]
@@ -30,8 +33,8 @@ pub fn render_setup(
 ) {
     let output_texture_handle = {
         let size = Extent3d {
-            width: 2584,
-            height: 2584,
+            width: 1584,
+            height: 1584,
             ..default()
         };
         let mut export_texture = Image {
@@ -64,15 +67,28 @@ pub fn render_setup(
         },
     );
 
+    let r = Quat::from_xyzw(-0., 0., 0., 1.);
+
+    let t2 = Tween::new(
+        EaseFunction::QuadraticOut,
+        Duration::from_secs(1),
+        TransformRotationLens {
+            start: r,
+            end: Quat::from_xyzw(0., -0.1, 0., 1.) * r,
+        },
+    );
+
+    let tracks = Tracks::new(vec![t]);
+
     // camera
     commands
         .spawn((Camera3dBundle {
-            projection: OrthographicProjection {
-                scale: 620.0,
-                scaling_mode: ScalingMode::FixedVertical(1.0),
-                ..default()
-            }
-            .into(),
+            // projection: OrthographicProjection {
+            //     scale: 420.0,
+            //     scaling_mode: ScalingMode::FixedVertical(1.0),
+            //     ..default()
+            // }
+            // .into(),
             camera: Camera {
                 hdr: true,
                 order: -1,
@@ -96,7 +112,7 @@ pub fn render_setup(
         })
         .insert(TemporalAntiAliasBundle::default())
         // .insert(PlisCamera)
-        .insert(Animator::new(t));
+        .insert(Animator::new(tracks));
 
     commands.spawn(ImageExportBundle {
         source: export_sources.add(output_texture_handle.into()),
