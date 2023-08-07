@@ -1,20 +1,16 @@
-use std::time::Duration;
-
-use bevy::{ecs::system::Command, prelude::*};
-use bevy_tweening::{lens::TransformPositionLens, Animator, AnimatorState, EaseFunction, Tween};
+use bevy::prelude::*;
 use rand::Rng;
 
 use crate::{
     combined::combine_meshes,
     grid_master::{GridDaddy, GridMaster},
-    make_outline_block, Block, BlockState, Bounds, ChunkState, ChunkStates, DeleteMeDaddy,
-    Position, Rect, SCALE,
+    make_outline_block, Block, BlockState, DeleteMeDaddy, Position, Rect, SCALE,
 };
 
 fn spawn_grid(
-    mut commands: &mut Commands,
-    mut meshes: &mut Assets<Mesh>,
-    mut materials: &mut Assets<StandardMaterial>,
+    commands: &mut Commands,
+    meshes: &mut Assets<Mesh>,
+    materials: &mut Assets<StandardMaterial>,
     grid_master: &GridMaster,
 ) {
     for i in 0..grid_master.grid.cols() {
@@ -98,7 +94,7 @@ pub fn get_outline_mesh(bounds: Rect) -> Mesh {
     combined
 }
 
-pub fn spawn_from_mesh(
+pub fn _spawn_from_mesh(
     commands: &mut Commands,
     mesh_vec: Vec<Mesh>,
     meshes: &mut ResMut<Assets<Mesh>>,

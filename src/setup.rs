@@ -1,13 +1,9 @@
 use bevy::{
-    core_pipeline::{
-        bloom::{BloomPrefilterSettings, BloomSettings},
-        experimental::taa::TemporalAntiAliasBundle,
-    },
+    core_pipeline::{bloom::BloomSettings, experimental::taa::TemporalAntiAliasBundle},
     pbr::{ScreenSpaceAmbientOcclusionBundle, ScreenSpaceAmbientOcclusionSettings},
     prelude::*,
     render::camera::ScalingMode,
 };
-use bevy_panorbit_camera::PanOrbitCamera;
 #[derive(Component)]
 pub struct PlisCamera;
 

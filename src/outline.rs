@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::{Bounds, SCALE};
+use crate::Bounds;
 // make a block that will take Bounds as input and output a
 // series of meshes that create outline of a cuboid
 

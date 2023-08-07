@@ -1,13 +1,10 @@
 use std::time::Duration;
 
-use bevy::{prelude::*, transform::commands};
-use bevy_egui::{
-    egui::{self, Context, InnerResponse, Ui, Widget},
-    EguiContexts,
-};
+use bevy::prelude::*;
+use bevy_egui::egui::{self, Context};
 use bevy_tweening::{
     lens::{TransformPositionLens, TransformRotationLens},
-    Animator, EaseFunction, EaseMethod, Tracks, Tween,
+    Animator, EaseFunction, Tracks, Tween,
 };
 
 use crate::{UIState, SCALE};
@@ -16,14 +13,14 @@ use crate::{UIState, SCALE};
 pub enum Modes {
     Home,
     Camera(CameraModes),
-    EditBlock(EditBlockModes),
+    // EditBlock(EditBlockModes),
 }
 
-#[derive(Clone, Debug)]
-pub enum EditBlockModes {
-    Selection(BlockSelection),
-    Color(BlockColor),
-}
+// #[derive(Clone, Debug)]
+// pub enum EditBlockModes {
+//     Selection(BlockSelection),
+//     Color(BlockColor),
+// }
 
 #[derive(Clone, Debug)]
 pub struct BlockSelection;
@@ -79,9 +76,9 @@ fn translate_rotate_around(
 fn roatate_around_animation(
     cur_translation: Vec3,
     cur_rotation: Quat,
-    point: Vec3,
+    _point: Vec3,
     rotation: Quat,
-    duration: Duration,
+    _duration: Duration,
 ) -> Tracks<bevy::prelude::Transform> {
     let (t, r) = translate_rotate_around(cur_translation, cur_rotation, Vec3::ZERO, rotation);
     let tween_t = Tween::new(
@@ -114,7 +111,7 @@ impl Rotate {
         keycode: &Res<Input<KeyCode>>,
         state: &mut UIState,
         transform: &mut bevy::prelude::Transform,
-        projection: &mut Projection,
+        _projection: &mut Projection,
         camera: Entity,
     ) {
         let shift = keycode.any_pressed([KeyCode::ShiftLeft, KeyCode::ShiftRight]);

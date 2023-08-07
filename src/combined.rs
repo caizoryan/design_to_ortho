@@ -1,11 +1,9 @@
-use std::f32::consts::PI;
-
 use bevy::{
     math::Vec4Swizzles,
     prelude::*,
     render::{
         mesh::{Indices, VertexAttributeValues},
-        render_resource::{Extent3d, PrimitiveTopology, TextureDimension, TextureFormat},
+        render_resource::PrimitiveTopology,
     },
 };
 

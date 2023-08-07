@@ -1,25 +1,21 @@
-use bevy::{prelude::*, transform::commands};
+use bevy::prelude::*;
 use bevy_egui::{
-    egui::{self, Context, InnerResponse, Ui, Widget},
+    egui::{self, Context, Widget},
     EguiContexts,
 };
 
 use crate::{
-    modes::{CameraModes, CameraSelection, EditBlockModes, Modes},
+    modes::{CameraModes, CameraSelection, Modes},
     setup::PlisCamera,
-    Bounds, ChunkStates, UIState,
+    UIState,
 };
 
 // each mode has its own implementation of ui
 // its own implementation of update
 
-fn label(ui: &mut Ui, text: &str) {
-    ui.label(text);
-}
-
 fn handle_camera_mode(
     ctx: &mut Context,
-    mut commands: Commands,
+    commands: Commands,
     mut state: ResMut<UIState>,
     keycode: Res<Input<KeyCode>>,
     mode: CameraModes,
@@ -50,18 +46,9 @@ fn handle_camera_mode(
     }
 }
 
-fn handle_edit_block_mode(
-    ctx: &mut Context,
-    mut state: ResMut<UIState>,
-    keycode: Res<Input<KeyCode>>,
-    mode: EditBlockModes,
-    mut chunk_states: &mut ChunkStates,
-) {
-}
-
 pub fn update(
     mut contexts: EguiContexts,
-    mut commands: Commands,
+    commands: Commands,
     mut state: ResMut<UIState>,
     mut query: Query<(Entity, &mut Projection)>,
     mut transform: Query<&mut Transform, With<PlisCamera>>,
@@ -85,11 +72,10 @@ pub fn update(
         Modes::Camera(mode) => handle_camera_mode(
             ctx, commands, state, keycode, mode, transform, projection, camera,
         ),
-        _ => {} // Modes::EditBlock(mode) => handle_edit_block_mode(ctx, state, keycode, mode, chunk_states),
     };
 }
 
-fn location_edit_widget(location: &mut Vec3) -> impl Widget + '_ {
+fn _location_edit_widget(location: &mut Vec3) -> impl Widget + '_ {
     move |ui: &mut egui::Ui| {
         ui.vertical(|ui| {
             ui.label("X:");
@@ -108,7 +94,7 @@ fn location_edit_widget(location: &mut Vec3) -> impl Widget + '_ {
     }
 }
 
-fn color_picker_widget(ui: &mut egui::Ui, color: &mut Color) -> egui::Response {
+fn _color_picker_widget(ui: &mut egui::Ui, color: &mut Color) -> egui::Response {
     let [r, g, b, a] = color.as_rgba_f32();
     let mut egui_color: egui::Rgba = egui::Rgba::from_srgba_unmultiplied(
         (r * 255.0) as u8,

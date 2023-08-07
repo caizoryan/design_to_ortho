@@ -5,14 +5,9 @@ use bevy_tweening::{
     lens::{TransformPositionLens, TransformRotationLens},
     Animator, AnimatorState, EaseFunction, Tracks, Tween,
 };
-use rand::{thread_rng, Rng};
+use rand::Rng;
 
-use crate::{
-    grid_master::{GridDaddy, GridMaster},
-    outline::make_outline_block,
-    spawn_block::spawn_from_mesh,
-    Block, BlockState, Bounds, DeleteMeDaddy, Position,
-};
+use crate::{grid_master::GridDaddy, Block, BlockState, Position};
 
 /// You can do some logic here to determine if you give the block texture or not
 fn give_texture(pos: Position) -> bool {
@@ -33,7 +28,7 @@ pub fn update_block(
     )>,
     mut grid_daddy: ResMut<GridDaddy>,
     asset_server: Res<AssetServer>,
-    mut meshes: ResMut<Assets<Mesh>>,
+    // meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
     time: Res<Time>,
 ) {
