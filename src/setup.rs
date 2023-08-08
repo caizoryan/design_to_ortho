@@ -23,7 +23,7 @@ pub fn setup(
         transform: Transform::from_xyz(50.0, 150.0, 100.0).looking_at(Vec3::ZERO, Vec3::Y),
         directional_light: DirectionalLight {
             shadows_enabled: true,
-            illuminance: 80000.0,
+            illuminance: 60000.0,
             ..Default::default()
         },
         ..Default::default()
@@ -45,13 +45,13 @@ pub fn setup(
                     hdr: true,
                     ..Default::default()
                 },
-                transform: Transform::from_xyz(0.0, 0.0, 200.0).looking_at(Vec3::ZERO, Vec3::Y),
+                transform: Transform::from_xyz(0.0, 0.0, 100.0).looking_at(Vec3::ZERO, Vec3::Y),
                 ..Default::default()
             },
-            BloomSettings {
-                intensity: 0.18,
-                ..default()
-            },
+            // BloomSettings {
+            //     intensity: 0.18,
+            //     ..default()
+            // },
         ))
         .insert(ScreenSpaceAmbientOcclusionBundle {
             settings: ScreenSpaceAmbientOcclusionSettings {

@@ -13,22 +13,28 @@ fn spawn_grid(
     grid_master: &GridMaster,
     textures: SexyTextures,
 ) {
+    let sizes = vec![0.5, 0.75, 1.0, 1.25, 1.5, 1.75];
+
     for i in 0..grid_master.grid.cols() {
         let mut col = 0;
 
         grid_master.grid.iter_col(i).for_each(|block| {
             if block.occupied {
                 let r = rand::thread_rng().gen_range(0..textures.texture_handle.len());
+                let size_r = rand::thread_rng().gen_range(0..sizes.len());
                 let t = &textures.texture_handle[r];
 
                 commands
                     .spawn(PbrBundle {
-                        mesh: meshes.add(Mesh::from(shape::Cube { size: 1. * SCALE })),
+                        mesh: meshes.add(Mesh::from(shape::Cube {
+                            size: sizes[size_r] * SCALE,
+                        })),
                         material: materials.add(StandardMaterial {
-                            base_color: Color::rgb(1.0, 0.0, 0.0),
+                            base_color: Color::rgba(1.0, 1.0, 0.0, 0.1),
                             base_color_texture: Some(t.clone()),
-                            emissive: Color::rgb(0.0, 0.0, 0.0),
-                            perceptual_roughness: 0.9,
+                            unlit: true,
+                            // emissive: Color::rgb(0.0, 0.0, 0.0),
+                            // perceptual_roughness: 0.9,
                             ..default()
                         }),
                         transform: Transform::from_translation(

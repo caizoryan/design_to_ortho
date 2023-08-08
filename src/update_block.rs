@@ -81,14 +81,14 @@ fn random_rotation() -> Quat {
     let rand = rand::thread_rng().gen_range(1..9);
     match rand {
         1 => Quat::from_rotation_y(90.0_f32.to_radians()),
-        2 => Quat::from_rotation_y(-90.0_f32.to_radians()),
+        // 2 => Quat::from_rotation_y(-90.0_f32.to_radians()),
         3 => Quat::from_rotation_z(90.0_f32.to_radians()),
-        4 => Quat::from_rotation_y(-90.0_f32.to_radians()),
+        // 4 => Quat::from_rotation_y(-90.0_f32.to_radians()),
         5 => Quat::from_rotation_x(90.0_f32.to_radians()),
-        6 => Quat::from_rotation_y(-90.0_f32.to_radians()),
-        7 => Quat::from_rotation_y(0.0_f32.to_radians()),
-        8 => Quat::from_rotation_x(0.0_f32.to_radians()),
-        9 => Quat::from_rotation_y(0.0_f32.to_radians()),
-        _ => Quat::from_rotation_y(0.0_f32.to_radians()),
+        // 6 => Quat::from_rotation_y(-90.0_f32.to_radians()),
+        // 7 => Quat::from_rotation_y(0.0_f32.to_radians()),
+        // 8 => Quat::from_rotation_x(0.0_f32.to_radians()),
+        // 9 => Quat::from_rotation_y(0.0_f32.to_radians()),
+        _ => Quat::from_rotation_z(90.0_f32.to_radians()),
     }
 }

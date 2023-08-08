@@ -114,8 +114,8 @@ impl Into<Bounds> for Rect {
 
 fn multiple_grid() -> GridDaddy {
     let mut v = Vec::new();
-    for i in 0..1 {
-        v.push(init_grid(4 + (5 - i), 10 + (5 - i), i * 2));
+    for i in 0..4 {
+        v.push(init_grid(10, 10, i));
     }
 
     GridDaddy { grids: v }
@@ -125,7 +125,7 @@ fn init_grid(rows: usize, cols: usize, layer: usize) -> GridMaster {
     let mut my_g = GridMaster::new(rows, cols, layer);
     let mut rand = rand::thread_rng();
     my_g.grid.iter_mut().for_each(|el| {
-        if rand.gen::<f32>() < 0.4 {
+        if rand.gen::<f32>() < 0.1 {
             el.occupied = true;
         }
     });
