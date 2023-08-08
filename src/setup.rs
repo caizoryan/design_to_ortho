@@ -4,10 +4,21 @@ use bevy::{
     prelude::*,
     render::camera::ScalingMode,
 };
+
+use crate::SexyTextures;
 #[derive(Component)]
 pub struct PlisCamera;
 
-pub fn setup(mut commands: Commands) {
+pub fn setup(
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+    mut texture: ResMut<SexyTextures>,
+) {
+    for i in 3..=9 {
+        let handle = asset_server.load(format!("{}.png", i));
+        texture.texture_handle.push(handle);
+    }
+
     commands.spawn(DirectionalLightBundle {
         transform: Transform::from_xyz(50.0, 150.0, 100.0).looking_at(Vec3::ZERO, Vec3::Y),
         directional_light: DirectionalLight {

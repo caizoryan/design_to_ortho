@@ -4,7 +4,7 @@ use crate::Bounds;
 // make a block that will take Bounds as input and output a
 // series of meshes that create outline of a cuboid
 
-pub fn make_outline_block(bounds: &Bounds) -> Vec<Mesh> {
+pub fn _make_outline_block(bounds: &Bounds) -> Vec<Mesh> {
     const OUTLINE_WIDTH: f32 = 0.08;
 
     // front top

@@ -7,7 +7,7 @@ use bevy::{
     },
 };
 
-pub fn combine_meshes(
+pub fn _combine_meshes(
     meshes: &[Mesh],
     transforms: &[Transform],
     use_normals: bool,

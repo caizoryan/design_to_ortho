@@ -10,7 +10,7 @@ mod update_block;
 use bevy_tweening::TweeningPlugin;
 use grid_master::{GridDaddy, GridMaster};
 use modes::Modes;
-use outline::make_outline_block;
+// use outline::make_outline_block;
 use rand::Rng;
 use setup::setup;
 use spawn_block::init_blocks;
@@ -33,6 +33,11 @@ pub struct ChunkStates(Vec<ChunkState>);
 
 #[derive(Clone)]
 pub struct Position(usize, usize, usize);
+
+#[derive(Resource, Clone)]
+pub struct SexyTextures {
+    pub texture_handle: Vec<Handle<Image>>,
+}
 
 impl Into<Vec3> for &Position {
     fn into(self) -> Vec3 {
@@ -134,6 +139,9 @@ fn main() {
             ..default()
         })
         .insert_resource(UIState { mode: Modes::Home })
+        .insert_resource(SexyTextures {
+            texture_handle: Vec::new(),
+        })
         .insert_resource(multiple_grid())
         .insert_resource(ClearColor(Color::rgb(1.0, 1.0, 1.0)))
         .add_plugins(DefaultPlugins)

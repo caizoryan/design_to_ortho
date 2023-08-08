@@ -7,16 +7,7 @@ use bevy_tweening::{
 };
 use rand::Rng;
 
-use crate::{grid_master::GridDaddy, Block, BlockState, Position};
-
-/// You can do some logic here to determine if you give the block texture or not
-fn give_texture(pos: Position) -> bool {
-    if pos.0 > 7 {
-        return true;
-    } else {
-        return false;
-    }
-}
+use crate::{grid_master::GridDaddy, Block, BlockState};
 
 pub fn update_block(
     mut commands: Commands,
@@ -27,17 +18,12 @@ pub fn update_block(
         &Handle<StandardMaterial>,
     )>,
     mut grid_daddy: ResMut<GridDaddy>,
-    asset_server: Res<AssetServer>,
-    // meshes: ResMut<Assets<Mesh>>,
-    mut materials: ResMut<Assets<StandardMaterial>>,
     time: Res<Time>,
 ) {
     for grid in grid_daddy.grids.iter_mut() {
         grid.clock.tick(time.delta_seconds());
 
-        let texture_handle = asset_server.load("texture.png");
-
-        for (entity, transform, mut block, material) in query.iter_mut() {
+        for (entity, transform, mut block, _material) in query.iter_mut() {
             if grid.layer == block.cur_location.2 {
                 let bs = block.state.clone();
 
@@ -75,20 +61,6 @@ pub fn update_block(
                             commands
                                 .entity(entity)
                                 .insert(Animator::new(tracks).with_state(AnimatorState::Playing));
-
-                            let loc = match block.next_location.is_some() {
-                                true => block.next_location.as_ref().unwrap().clone(),
-                                false => block.cur_location.clone(),
-                            };
-                            if give_texture(loc) {
-                                if let Some(handle) = materials.get_mut(material) {
-                                    handle.base_color_texture = Some(texture_handle.clone());
-                                }
-                            } else {
-                                if let Some(handle) = materials.get_mut(material) {
-                                    handle.base_color_texture = None;
-                                }
-                            }
                         };
                     }
                     BlockState::Animating => {
