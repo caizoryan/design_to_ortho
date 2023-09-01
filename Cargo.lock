@@ -625,8 +625,6 @@ dependencies = [
 [[package]]
 name = "bevy_image_export"
 version = "0.8.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6bfd8a650122dd4604bb267ea0bdf9e97f4d2c9517e50971f385f5f16ed4a960"
 dependencies = [
  "bevy",
  "bytemuck",

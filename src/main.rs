@@ -23,27 +23,11 @@ pub struct PlisImage {
     pub image: Option<Handle<Image>>,
 }
 
-fn screenshot_on_spacebar(
-    input: Res<Input<KeyCode>>,
-    image: Res<Assets<Image>>,
-    handle: Res<PlisImage>,
-) {
-    let x = image.get(handle.image.as_ref().unwrap()).unwrap().clone();
-    let y = x.try_into_dynamic().unwrap();
-    let img = y.to_rgb8();
-
-    if input.just_pressed(KeyCode::Space) {
-        // thread::spawn(move || {
-        let _ = img.save("./screenshot.png");
-        // });
-    }
-    println!();
-}
-
 use bevy::{
     core_pipeline::experimental::taa::TemporalAntiAliasPlugin,
     prelude::*,
     render::view::screenshot::ScreenshotManager,
+    time::Timer,
     window::{PrimaryWindow, WindowMode, WindowResolution},
 };
 use bevy_egui::EguiPlugin;
@@ -124,6 +108,8 @@ pub struct Rect {
     pub d: f32,
 }
 
+pub struct PersonalTimer(Timer);
+
 pub const SCALE: f32 = 40.;
 
 impl Into<Bounds> for Rect {
@@ -183,7 +169,6 @@ fn main() {
         .add_systems(Startup, setup)
         .add_systems(Startup, init_blocks)
         .add_systems(Startup, render_setup)
-        // .add_systems(Update, screenshot_on_spacebar)
         .add_systems(FixedUpdate, update_block)
         .add_systems(Update, update)
         .insert_resource(FixedTime::new_from_secs(0.1))

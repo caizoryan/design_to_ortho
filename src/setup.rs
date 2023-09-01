@@ -2,10 +2,7 @@
 use std::{f32::consts::PI, time::Duration};
 
 use bevy::{
-    core_pipeline::{
-        bloom::{BloomPrefilterSettings, BloomSettings},
-        experimental::taa::TemporalAntiAliasBundle,
-    },
+    core_pipeline::experimental::taa::TemporalAntiAliasBundle,
     pbr::{ScreenSpaceAmbientOcclusionBundle, ScreenSpaceAmbientOcclusionSettings},
     prelude::*,
     render::{
@@ -16,13 +13,11 @@ use bevy::{
     },
 };
 use bevy_image_export::{ImageExportBundle, ImageExportSettings, ImageExportSource};
-use bevy_panorbit_camera::PanOrbitCamera;
 use bevy_tweening::{
     lens::{TransformPositionLens, TransformRotationLens},
     Animator, EaseFunction, Tracks, Tween,
 };
 
-use crate::PlisImage;
 #[derive(Component)]
 pub struct PlisCamera;
 
@@ -121,6 +116,7 @@ pub fn render_setup(
             output_dir: "out".into(),
             // Choose "exr" for HDR renders.
             extension: "png".into(),
+            render: false,
         },
     });
 }
@@ -136,43 +132,28 @@ pub fn setup(mut commands: Commands) {
         ..Default::default()
     });
 
-    // let t = Tween::new(
-    //     EaseFunction::QuadraticOut,
-    //     Duration::from_secs(10),
-    //     TransformPositionLens {
-    //         start: Vec3::new(120.0, -180.0, 420.0),
-    //         end: Vec3::new(1420.0, -180.0, 420.0),
-    //     },
-    // );
-
     // camera
     commands
-        .spawn((
-            Camera3dBundle {
-                projection: OrthographicProjection {
-                    scale: 420.0,
-                    scaling_mode: ScalingMode::FixedVertical(1.0),
-                    far: 5000.0,
-                    near: 0.0,
-                    ..default()
-                }
-                .into(),
-                camera: Camera {
-                    hdr: true,
-                    ..Default::default()
-                },
-                transform: Transform {
-                    translation: Vec3::new(120.0, -180.0, 420.0),
-                    rotation: Quat::from_xyzw(-0., 0., 0., 1.),
-                    ..default()
-                },
+        .spawn((Camera3dBundle {
+            projection: OrthographicProjection {
+                scale: 420.0,
+                scaling_mode: ScalingMode::FixedVertical(1.0),
+                far: 5000.0,
+                near: 0.0,
+                ..default()
+            }
+            .into(),
+            camera: Camera {
+                hdr: true,
                 ..Default::default()
             },
-            // BloomSettings {
-            // intensity: 0.18,
-            // ..default()
-            // },
-        ))
+            transform: Transform {
+                translation: Vec3::new(120.0, -180.0, 420.0),
+                rotation: Quat::from_xyzw(-0., 0., 0., 1.),
+                ..default()
+            },
+            ..Default::default()
+        },))
         .insert(ScreenSpaceAmbientOcclusionBundle {
             settings: ScreenSpaceAmbientOcclusionSettings {
                 quality_level: bevy::pbr::ScreenSpaceAmbientOcclusionQualityLevel::Medium,
@@ -182,5 +163,4 @@ pub fn setup(mut commands: Commands) {
         })
         .insert(TemporalAntiAliasBundle::default())
         .insert(PlisCamera);
-    // .insert(Animator::new(t));
 }
