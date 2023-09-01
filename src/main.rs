@@ -135,7 +135,7 @@ fn init_grid(rows: usize, cols: usize, layer: usize) -> GridMaster {
 fn main() {
     App::new()
         .insert_resource(AmbientLight {
-            brightness: 3.0,
+            brightness: 4.0,
             ..default()
         })
         .insert_resource(UIState { mode: Modes::Home })
@@ -152,6 +152,6 @@ fn main() {
         .add_systems(Startup, init_blocks)
         .add_systems(FixedUpdate, update_block)
         .add_systems(Update, update)
-        .insert_resource(FixedTime::new_from_secs(0.1))
+        .insert_resource(FixedTime::new_from_secs(0.3))
         .run();
 }

@@ -1,5 +1,5 @@
 use bevy::{
-    core_pipeline::{bloom::BloomSettings, experimental::taa::TemporalAntiAliasBundle},
+    core_pipeline::experimental::taa::TemporalAntiAliasBundle,
     pbr::{ScreenSpaceAmbientOcclusionBundle, ScreenSpaceAmbientOcclusionSettings},
     prelude::*,
     render::camera::ScalingMode,
