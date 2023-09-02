@@ -114,7 +114,7 @@ pub fn setup(
             parent
                 .spawn(Camera3dBundle {
                     projection: OrthographicProjection {
-                        scale: 50.0,
+                        scale: 20.0,
                         scaling_mode: ScalingMode::FixedVertical(1.0),
                         far: 5000.0,
                         near: 0.0,

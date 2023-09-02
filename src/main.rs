@@ -47,7 +47,8 @@ impl Into<Vec3> for &Position {
         Vec3::new(
             (self.0 as f32) * SCALE,
             -(self.1 as f32) * SCALE,
-            (self.2 as f32) * SCALE,
+            self.2 as f32,
+            // (self.2 as f32) * SCALE,
         )
     }
 }
@@ -56,7 +57,8 @@ impl Into<Vec3> for Position {
         Vec3::new(
             (self.0 as f32) * SCALE,
             -(self.1 as f32) * SCALE,
-            (self.2 as f32) * SCALE,
+            self.2 as f32,
+            // (self.2 as f32) * SCALE,
         )
     }
 }
@@ -117,8 +119,8 @@ impl Into<Bounds> for Rect {
 
 fn multiple_grid() -> GridDaddy {
     let mut v = Vec::new();
-    for i in 0..4 {
-        v.push(init_grid(10, 10, i));
+    for i in 0..8 {
+        v.push(init_grid(3, 3, i));
     }
 
     GridDaddy { grids: v }
@@ -128,7 +130,7 @@ fn init_grid(rows: usize, cols: usize, layer: usize) -> GridMaster {
     let mut my_g = GridMaster::new(rows, cols, layer);
     let mut rand = rand::thread_rng();
     my_g.grid.iter_mut().for_each(|el| {
-        if rand.gen::<f32>() < 0.1 {
+        if rand.gen::<f32>() < 0.16 {
             el.occupied = true;
         }
     });
