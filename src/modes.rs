@@ -50,6 +50,8 @@ impl CameraSelection {
             state.mode = Modes::Camera(CameraModes::Transform(Transform));
         } else if keycode.just_pressed(KeyCode::R) {
             state.mode = Modes::Camera(CameraModes::Rotate(Rotate));
+        } else if keycode.just_pressed(KeyCode::Back) {
+            state.mode = Modes::Home;
         }
     }
     pub fn ui(self, ctx: &mut Context) {
@@ -222,10 +224,10 @@ impl Transform {
             if let Projection::Orthographic(ref mut orthographic) = *projection {
                 orthographic.scale += 1. * SCALE;
             }
-        } else if keycode.just_pressed(KeyCode::B) {
-            state.mode = Modes::Camera(CameraModes::Selection(CameraSelection));
         } else if keycode.just_pressed(KeyCode::R) {
             state.mode = Modes::Camera(CameraModes::Rotate(Rotate));
+        } else if keycode.just_pressed(KeyCode::Back) {
+            state.mode = Modes::Camera(CameraModes::Selection(CameraSelection));
         }
     }
     pub fn ui(self, ctx: &mut Context) {

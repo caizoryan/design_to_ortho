@@ -7,17 +7,20 @@ mod spawn_block;
 mod update;
 mod update_block;
 
+use bevy_image_export::{ImageExportPlugin, ImageExportSystems};
 use bevy_tweening::TweeningPlugin;
 use grid_master::{GridDaddy, GridMaster};
 use modes::Modes;
 // use outline::make_outline_block;
 use rand::Rng;
-use setup::setup;
+use setup::{render_setup, setup};
 use spawn_block::init_blocks;
 use update::update;
 use update_block::update_block;
 
-use bevy::{core_pipeline::experimental::taa::TemporalAntiAliasPlugin, prelude::*};
+use bevy::{
+    core_pipeline::experimental::taa::TemporalAntiAliasPlugin, prelude::*, window::WindowResolution,
+};
 use bevy_egui::EguiPlugin;
 
 #[derive(Resource)]
@@ -133,6 +136,9 @@ fn init_grid(rows: usize, cols: usize, layer: usize) -> GridMaster {
 }
 
 fn main() {
+    let export_plugin = ImageExportPlugin::default();
+    let export_threads = export_plugin.threads.clone();
+
     App::new()
         .insert_resource(AmbientLight {
             brightness: 4.0,
@@ -144,7 +150,16 @@ fn main() {
         })
         .insert_resource(multiple_grid())
         .insert_resource(ClearColor(Color::rgb(1.0, 1.0, 1.0)))
-        .add_plugins(DefaultPlugins)
+        .add_plugins((
+            DefaultPlugins.set(WindowPlugin {
+                primary_window: Some(Window {
+                    resolution: WindowResolution::new(768.0, 768.0).with_scale_factor_override(1.0),
+                    ..default()
+                }),
+                ..default()
+            }),
+            export_plugin,
+        ))
         .add_plugins(TweeningPlugin)
         .add_plugins(TemporalAntiAliasPlugin)
         .add_plugins(EguiPlugin)
@@ -154,4 +169,6 @@ fn main() {
         .add_systems(Update, update)
         .insert_resource(FixedTime::new_from_secs(0.3))
         .run();
+
+    export_threads.finish();
 }

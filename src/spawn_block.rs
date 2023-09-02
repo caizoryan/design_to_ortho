@@ -11,7 +11,7 @@ fn spawn_grid(
     meshes: &mut Assets<Mesh>,
     materials: &mut Assets<StandardMaterial>,
     grid_master: &GridMaster,
-    textures: SexyTextures,
+    textures: &SexyTextures,
 ) {
     let sizes = vec![0.5, 0.75, 1.0, 1.25, 1.5, 1.75];
 
@@ -30,7 +30,7 @@ fn spawn_grid(
                             size: sizes[size_r] * SCALE,
                         })),
                         material: materials.add(StandardMaterial {
-                            base_color: Color::rgba(1.0, 1.0, 0.0, 0.1),
+                            base_color: Color::rgba(1.0, 0.0, 0.0, 0.1),
                             base_color_texture: Some(t.clone()),
                             unlit: true,
                             // emissive: Color::rgb(0.0, 0.0, 0.0),
@@ -61,13 +61,7 @@ pub fn init_blocks(
     textures: Res<SexyTextures>,
 ) {
     for grid in grid_master.grids.iter() {
-        spawn_grid(
-            &mut commands,
-            &mut meshes,
-            &mut materials,
-            grid,
-            textures.clone(),
-        );
+        spawn_grid(&mut commands, &mut meshes, &mut materials, grid, &textures);
     }
 }
 

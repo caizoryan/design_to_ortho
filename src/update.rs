@@ -3,6 +3,7 @@ use bevy_egui::{
     egui::{self, Context, Widget},
     EguiContexts,
 };
+use bevy_image_export::ImageExportSettings;
 
 use crate::{
     modes::{CameraModes, CameraSelection, Modes},
@@ -50,8 +51,10 @@ pub fn update(
     mut contexts: EguiContexts,
     commands: Commands,
     mut state: ResMut<UIState>,
-    mut query: Query<(Entity, &mut Projection)>,
+    mut query: Query<(Entity, &mut Projection, With<PlisCamera>)>,
     mut transform: Query<&mut Transform, With<PlisCamera>>,
+    mut render: Query<&mut ImageExportSettings>,
+
     keycode: Res<Input<KeyCode>>,
 ) {
     let ctx = contexts.ctx_mut();
@@ -63,10 +66,18 @@ pub fn update(
     let mut transform = transform.single_mut();
     let transform = transform.as_mut();
 
+    let mut render = render.single_mut();
+
     let _ = match state.mode.clone() {
         Modes::Home => {
             if keycode.just_pressed(KeyCode::C) {
                 state.mode = Modes::Camera(CameraModes::Selection(CameraSelection));
+            }
+            if keycode.pressed(KeyCode::R) {
+                render.render = true;
+            }
+            if keycode.just_released(KeyCode::R) {
+                render.render = false;
             }
         }
         Modes::Camera(mode) => handle_camera_mode(
