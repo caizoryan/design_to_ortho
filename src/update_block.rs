@@ -36,7 +36,7 @@ pub fn update_block(
 
                             let t = Tween::new(
                                 EaseFunction::QuadraticOut,
-                                Duration::from_secs(1),
+                                Duration::from_secs(2),
                                 TransformPositionLens {
                                     start: transform.translation,
                                     end: next_location.into(),
@@ -45,7 +45,7 @@ pub fn update_block(
 
                             let r = Tween::new(
                                 EaseFunction::QuadraticOut,
-                                Duration::from_secs(1),
+                                Duration::from_secs(2),
                                 TransformRotationLens {
                                     start: transform.rotation,
                                     end: random_rotation() * transform.rotation,

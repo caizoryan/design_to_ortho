@@ -117,8 +117,9 @@ impl Rotate {
         camera: Entity,
     ) {
         let shift = keycode.any_pressed([KeyCode::ShiftLeft, KeyCode::ShiftRight]);
+
         let angle = 15.0_f32.to_radians();
-        if keycode.just_pressed(KeyCode::Y) && shift {
+        if keycode.just_pressed(KeyCode::J) && shift {
             let angle = Quat::from_rotation_y(-angle);
             let track = roatate_around_animation(
                 transform.translation,
@@ -129,7 +130,7 @@ impl Rotate {
             );
 
             commands.entity(camera).insert(Animator::new(track));
-        } else if shift && keycode.just_pressed(KeyCode::X) {
+        } else if shift && keycode.just_pressed(KeyCode::K) {
             let angle = Quat::from_rotation_x(-angle);
 
             let track = roatate_around_animation(
@@ -141,7 +142,7 @@ impl Rotate {
             );
 
             commands.entity(camera).insert(Animator::new(track));
-        } else if shift && keycode.just_pressed(KeyCode::Z) {
+        } else if shift && keycode.just_pressed(KeyCode::L) {
             let angle = Quat::from_rotation_z(-angle);
             let track = roatate_around_animation(
                 transform.translation,
@@ -152,7 +153,7 @@ impl Rotate {
             );
 
             commands.entity(camera).insert(Animator::new(track));
-        } else if keycode.just_pressed(KeyCode::Z) {
+        } else if keycode.just_pressed(KeyCode::L) {
             let angle = Quat::from_rotation_z(angle);
             let track = roatate_around_animation(
                 transform.translation,
@@ -163,7 +164,7 @@ impl Rotate {
             );
 
             commands.entity(camera).insert(Animator::new(track));
-        } else if keycode.just_pressed(KeyCode::X) {
+        } else if keycode.just_pressed(KeyCode::K) {
             let angle = Quat::from_rotation_x(angle);
             let track = roatate_around_animation(
                 transform.translation,
@@ -174,7 +175,7 @@ impl Rotate {
             );
 
             commands.entity(camera).insert(Animator::new(track));
-        } else if keycode.just_pressed(KeyCode::Y) {
+        } else if keycode.just_pressed(KeyCode::J) {
             let angle = Quat::from_rotation_y(angle);
             let track = roatate_around_animation(
                 transform.translation,
@@ -208,19 +209,19 @@ impl Transform {
         transform: &mut bevy::prelude::Transform,
         projection: &mut Projection,
     ) {
-        if keycode.just_pressed(KeyCode::X) && keycode.pressed(KeyCode::ShiftLeft) {
+        if keycode.just_pressed(KeyCode::K) && keycode.pressed(KeyCode::ShiftLeft) {
             transform.translation.x -= 1.0 * SCALE;
-        } else if keycode.just_pressed(KeyCode::Y) && keycode.pressed(KeyCode::ShiftLeft) {
+        } else if keycode.just_pressed(KeyCode::J) && keycode.pressed(KeyCode::ShiftLeft) {
             transform.translation.y -= 1.0 * SCALE;
-        } else if keycode.just_pressed(KeyCode::Z) && keycode.pressed(KeyCode::ShiftLeft) {
+        } else if keycode.just_pressed(KeyCode::L) && keycode.pressed(KeyCode::ShiftLeft) {
             if let Projection::Orthographic(ref mut orthographic) = *projection {
                 orthographic.scale -= 1. * SCALE;
             }
-        } else if keycode.just_pressed(KeyCode::X) {
+        } else if keycode.just_pressed(KeyCode::K) {
             transform.translation.x += 1.0 * SCALE;
-        } else if keycode.just_pressed(KeyCode::Y) {
+        } else if keycode.just_pressed(KeyCode::J) {
             transform.translation.y += 1.0 * SCALE;
-        } else if keycode.just_pressed(KeyCode::Z) {
+        } else if keycode.just_pressed(KeyCode::L) {
             if let Projection::Orthographic(ref mut orthographic) = *projection {
                 orthographic.scale += 1. * SCALE;
             }

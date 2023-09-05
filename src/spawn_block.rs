@@ -13,7 +13,7 @@ fn spawn_grid(
     grid_master: &GridMaster,
     textures: &SexyTextures,
 ) {
-    let sizes = vec![0.25, 0.5, 0.75, 1.0];
+    let sizes = vec![(0.125 / 2.), 0.125, 0.25, 0.5, 0.75, 1.0];
 
     let mut count = 0;
     for i in 0..grid_master.grid.cols() {
@@ -26,8 +26,9 @@ fn spawn_grid(
                 let size_r = rand::thread_rng().gen_range(0..sizes.len());
                 let t = &textures.texture_handle[r];
 
-                let c_r = rand::thread_rng().gen_range(0.6..1.0);
-                let c_g = rand::thread_rng().gen_range(0.1..0.3);
+                let c_r = rand::thread_rng().gen_range(0.0..1.0);
+                let c_g = rand::thread_rng().gen_range(0.0..1.0);
+                let c_b = rand::thread_rng().gen_range(0.0..1.0);
 
                 commands
                     .spawn(PbrBundle {
@@ -35,8 +36,8 @@ fn spawn_grid(
                             size: sizes[size_r] * SCALE,
                         })),
                         material: materials.add(StandardMaterial {
-                            base_color: Color::rgba(c_r, c_g, 0.0, 0.1),
-                            base_color_texture: Some(t.clone()),
+                            base_color: Color::rgba(c_r, c_g, c_b, 1.0),
+                            // base_color_texture: Some(t.clone()),
                             // unlit: true,
                             // // emissive: Color::rgb(0.0, 0.0, 0.0),
                             // // perceptual_roughness: 0.9,

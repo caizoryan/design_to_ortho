@@ -20,7 +20,6 @@ use crate::SexyTextures;
 #[derive(Component)]
 pub struct PlisCamera;
 
-pub fn render_setup(mut commands: Commands) {}
 pub fn setup(
     mut commands: Commands,
     mut images: ResMut<Assets<Image>>,
@@ -82,15 +81,17 @@ pub fn setup(
 
     let tracks = Tracks::new(vec![t]);
 
-    commands.spawn(DirectionalLightBundle {
-        transform: Transform::from_xyz(50.0, 150.0, 100.0).looking_at(Vec3::ZERO, Vec3::Y),
-        directional_light: DirectionalLight {
-            shadows_enabled: true,
-            illuminance: 60000.0,
+    commands
+        .spawn(DirectionalLightBundle {
+            transform: Transform::from_xyz(50.0, 150.0, 100.0).looking_at(Vec3::ZERO, Vec3::Y),
+            directional_light: DirectionalLight {
+                shadows_enabled: true,
+                illuminance: 60000.0,
+                ..Default::default()
+            },
             ..Default::default()
-        },
-        ..Default::default()
-    });
+        })
+        .insert(Animator::new(tracks));
 
     // camera
     commands
@@ -114,7 +115,7 @@ pub fn setup(
             parent
                 .spawn(Camera3dBundle {
                     projection: OrthographicProjection {
-                        scale: 20.0,
+                        scale: 40.0,
                         scaling_mode: ScalingMode::FixedVertical(1.0),
                         far: 5000.0,
                         near: 0.0,

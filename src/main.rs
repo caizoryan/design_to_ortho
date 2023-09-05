@@ -13,7 +13,7 @@ use grid_master::{GridDaddy, GridMaster};
 use modes::Modes;
 // use outline::make_outline_block;
 use rand::Rng;
-use setup::{render_setup, setup};
+use setup::setup;
 use spawn_block::init_blocks;
 use update::update;
 use update_block::update_block;
@@ -120,7 +120,7 @@ impl Into<Bounds> for Rect {
 fn multiple_grid() -> GridDaddy {
     let mut v = Vec::new();
     for i in 0..8 {
-        v.push(init_grid(3, 3, i));
+        v.push(init_grid(5, 3, i));
     }
 
     GridDaddy { grids: v }
@@ -130,7 +130,7 @@ fn init_grid(rows: usize, cols: usize, layer: usize) -> GridMaster {
     let mut my_g = GridMaster::new(rows, cols, layer);
     let mut rand = rand::thread_rng();
     my_g.grid.iter_mut().for_each(|el| {
-        if rand.gen::<f32>() < 0.16 {
+        if rand.gen::<f32>() < 0.46 {
             el.occupied = true;
         }
     });
