@@ -1,4 +1,7 @@
-use bevy::prelude::*;
+use bevy::{
+    pbr::{NotShadowCaster, NotShadowReceiver},
+    prelude::*,
+};
 use rand::Rng;
 
 use crate::{
@@ -13,7 +16,7 @@ fn spawn_grid(
     grid_master: &GridMaster,
     textures: &SexyTextures,
 ) {
-    let sizes = vec![(0.125 / 2.), 0.125, 0.25, 0.5, 0.75, 1.0];
+    let sizes = vec![0.2];
 
     let mut count = 0;
     for i in 0..grid_master.grid.cols() {
@@ -22,8 +25,8 @@ fn spawn_grid(
         grid_master.grid.iter_col(i).for_each(|block| {
             count += 1;
             if block.occupied {
-                let r = count % textures.texture_handle.len();
                 let size_r = rand::thread_rng().gen_range(0..sizes.len());
+                let r = count % textures.texture_handle.len();
                 let t = &textures.texture_handle[r];
 
                 let c_r = rand::thread_rng().gen_range(0.0..1.0);
@@ -31,23 +34,27 @@ fn spawn_grid(
                 let c_b = rand::thread_rng().gen_range(0.0..1.0);
 
                 commands
-                    .spawn(PbrBundle {
-                        mesh: meshes.add(Mesh::from(shape::Cube {
-                            size: sizes[size_r] * SCALE,
-                        })),
-                        material: materials.add(StandardMaterial {
-                            base_color: Color::rgba(c_r, c_g, c_b, 1.0),
-                            // base_color_texture: Some(t.clone()),
-                            // unlit: true,
-                            // // emissive: Color::rgb(0.0, 0.0, 0.0),
-                            // // perceptual_roughness: 0.9,
+                    .spawn((
+                        PbrBundle {
+                            mesh: meshes.add(Mesh::from(shape::Cube {
+                                size: sizes[size_r] * SCALE,
+                            })),
+                            material: materials.add(StandardMaterial {
+                                base_color: Color::rgba(1.0, 1.0, 1.0, 1.0),
+                                // base_color_texture: Some(t.clone()),
+                                // unlit: true,
+                                // // emissive: Color::rgb(0.0, 0.0, 0.0),
+                                perceptual_roughness: 0.9,
+                                ..default()
+                            }),
+                            transform: Transform::from_translation(
+                                Position(col, i, grid_master.layer).into(),
+                            ),
                             ..default()
-                        }),
-                        transform: Transform::from_translation(
-                            Position(col, i, grid_master.layer).into(),
-                        ),
-                        ..default()
-                    })
+                        },
+                        NotShadowCaster,
+                        NotShadowReceiver,
+                    ))
                     .insert(Block {
                         cur_location: Position(col, i, grid_master.layer),
                         next_location: None,

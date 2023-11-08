@@ -80,19 +80,51 @@ pub fn setup(
     );
 
     let tracks = Tracks::new(vec![t]);
+    //
+    // commands
+    //     .spawn(DirectionalLightBundle {
+    //         transform: Transform::from_xyz(50.0, 150.0, 100.0).looking_at(Vec3::ZERO, Vec3::Y),
+    //         directional_light: DirectionalLight {
+    //             shadows_enabled: true,
+    //             illuminance: 60000.0,
+    //             ..Default::default()
+    //         },
+    //         ..Default::default()
+    //     })
+    //     .insert(Animator::new(tracks));
 
-    commands
-        .spawn(DirectionalLightBundle {
-            transform: Transform::from_xyz(50.0, 150.0, 100.0).looking_at(Vec3::ZERO, Vec3::Y),
-            directional_light: DirectionalLight {
-                shadows_enabled: true,
-                illuminance: 60000.0,
-                ..Default::default()
-            },
+    commands.spawn(DirectionalLightBundle {
+        transform: Transform::from_xyz(0.0, 0.0, 100.0).looking_at(Vec3::ZERO, Vec3::Y),
+        directional_light: DirectionalLight {
+            shadows_enabled: true,
+            illuminance: 30000.0,
+            color: Color::rgb(0.0, 1.0, 0.0),
             ..Default::default()
-        })
-        .insert(Animator::new(tracks));
+        },
+        ..Default::default()
+    });
 
+    commands.spawn(DirectionalLightBundle {
+        transform: Transform::from_xyz(100.0, 0.0, 0.0).looking_at(Vec3::ZERO, Vec3::Y),
+        directional_light: DirectionalLight {
+            shadows_enabled: true,
+            illuminance: 30000.0,
+            color: Color::rgb(0.0, 0.0, 1.0),
+            ..Default::default()
+        },
+        ..Default::default()
+    });
+
+    commands.spawn(DirectionalLightBundle {
+        transform: Transform::from_xyz(0.0, 100.0, 0.0).looking_at(Vec3::ZERO, Vec3::Y),
+        directional_light: DirectionalLight {
+            shadows_enabled: true,
+            illuminance: 30000.0,
+            color: Color::rgb(1.0, 0.0, 0.0),
+            ..Default::default()
+        },
+        ..Default::default()
+    });
     // camera
     commands
         .spawn((Camera3dBundle {

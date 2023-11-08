@@ -119,8 +119,8 @@ impl Into<Bounds> for Rect {
 
 fn multiple_grid() -> GridDaddy {
     let mut v = Vec::new();
-    for i in 0..8 {
-        v.push(init_grid(5, 3, i));
+    for i in 0..58 {
+        v.push(init_grid(3, 5, i));
     }
 
     GridDaddy { grids: v }
@@ -130,7 +130,7 @@ fn init_grid(rows: usize, cols: usize, layer: usize) -> GridMaster {
     let mut my_g = GridMaster::new(rows, cols, layer);
     let mut rand = rand::thread_rng();
     my_g.grid.iter_mut().for_each(|el| {
-        if rand.gen::<f32>() < 0.46 {
+        if rand.gen::<f32>() < 0.26 {
             el.occupied = true;
         }
     });
@@ -142,10 +142,10 @@ fn main() {
     let export_threads = export_plugin.threads.clone();
 
     App::new()
-        .insert_resource(AmbientLight {
-            brightness: 4.0,
-            ..default()
-        })
+        // .insert_resource(AmbientLight {
+        //     brightness: 4.0,
+        //     ..default()
+        // })
         .insert_resource(UIState { mode: Modes::Home })
         .insert_resource(SexyTextures {
             texture_handle: Vec::new(),
