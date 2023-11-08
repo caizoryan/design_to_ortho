@@ -112,11 +112,6 @@ pub fn setup(
                         target: RenderTarget::Image(output_texture_handle.clone()),
                         ..Default::default()
                     },
-                    transform: Transform {
-                        translation: Vec3::new(120.0, -180.0, 420.0),
-                        rotation: Quat::from_xyzw(-0., 0., 0., 1.),
-                        ..Default::default()
-                    },
 
                     ..Default::default()
                 },))

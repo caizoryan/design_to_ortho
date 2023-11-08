@@ -95,9 +95,13 @@ pub fn update(
                 render.render = false;
                 // write config to file
                 //
-                let config: Config = Config::new(None);
-                serde_json::to_writer_pretty(std::fs::File::create("config.txt").unwrap(), &config)
-                    .unwrap();
+                let config: Config =
+                    Config::new(Some(transform.translation), Some(transform.rotation));
+                serde_json::to_writer_pretty(
+                    std::fs::File::create("out/config.txt").unwrap(),
+                    &config,
+                )
+                .unwrap();
             }
         }
         Modes::Camera(mode) => handle_camera_mode(

@@ -124,7 +124,7 @@ impl Into<Bounds> for Rect {
 }
 
 fn multiple_grid() -> GridDaddy {
-    let config = Config::new(None);
+    let config = Config::new(None, None);
 
     let mut v = Vec::new();
 

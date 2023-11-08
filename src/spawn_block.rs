@@ -6,6 +6,7 @@ use rand::Rng;
 
 use crate::{
     combined::combine_meshes,
+    config::Config,
     grid_master::{GridDaddy, GridMaster},
     make_outline_block, Block, BlockState, Bounds, ChunkState, ChunkStates, DeleteMeDaddy,
     Position, Rect, SCALE,
@@ -18,6 +19,8 @@ fn spawn_grid(
     grid_master: &GridMaster,
     asset_server: AssetServer,
 ) {
+    let config = Config::new(None, None);
+
     let mut textures = Vec::new();
 
     for i in 1..12 {
@@ -45,7 +48,11 @@ fn spawn_grid(
                         mesh: meshes.add(Mesh::from(shape::Cube { size: 1. * SCALE })),
                         material: materials.add(StandardMaterial {
                             base_color_texture: Some(textures[u].clone()),
-                            base_color: Color::rgb(1.0, 0.0, 1.0),
+                            base_color: Color::rgb(
+                                config.base_color.0,
+                                config.base_color.1,
+                                config.base_color.2,
+                            ),
                             // emissive: Color::rgb(0.0, 0.0, 0.0),
                             perceptual_roughness: 0.9,
                             ..default()
