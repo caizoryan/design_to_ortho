@@ -15,7 +15,7 @@ use grid_master::{GridDaddy, GridMaster};
 use modes::Modes;
 use outline::make_outline_block;
 use rand::Rng;
-use setup::{render_setup, setup};
+use setup::setup;
 use spawn_block::init_blocks;
 use update::update;
 use update_block::update_block;
@@ -173,7 +173,6 @@ fn main() {
         .add_plugins(EguiPlugin)
         .add_systems(Startup, setup)
         .add_systems(Startup, init_blocks)
-        .add_systems(Startup, render_setup)
         .add_systems(FixedUpdate, update_block)
         .add_systems(Update, update)
         .insert_resource(FixedTime::new_from_secs(0.1))

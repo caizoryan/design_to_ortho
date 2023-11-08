@@ -21,8 +21,16 @@ use bevy_tweening::{
 #[derive(Component)]
 pub struct PlisCamera;
 
-pub fn render_setup(
+// pub fn render_setup(
+//     mut commands: Commands,
+//     mut images: ResMut<Assets<Image>>,
+//     mut export_sources: ResMut<Assets<ImageExportSource>>,
+// ) {
+// }
+//
+pub fn setup(
     mut commands: Commands,
+
     mut images: ResMut<Assets<Image>>,
     mut export_sources: ResMut<Assets<ImageExportSource>>,
 ) {
@@ -53,76 +61,8 @@ pub fn render_setup(
         images.add(export_texture)
     };
 
-    let t = Tween::new(
-        EaseFunction::QuadraticOut,
-        Duration::from_secs(2),
-        TransformPositionLens {
-            start: Vec3::new(120.0, -180.0, 420.0),
-            end: Vec3::new(1420.0, -180.0, 420.0),
-        },
-    );
-
-    let r = Quat::from_xyzw(-0., 0., 0., 1.);
-
-    let t2 = Tween::new(
-        EaseFunction::QuadraticOut,
-        Duration::from_secs(1),
-        TransformRotationLens {
-            start: r,
-            end: Quat::from_xyzw(0., -0.1, 0., 1.) * r,
-        },
-    );
-
-    let tracks = Tracks::new(vec![t]);
-
     // camera
-    commands
-        .spawn((Camera3dBundle {
-            projection: OrthographicProjection {
-                scale: 420.0,
-                scaling_mode: ScalingMode::FixedVertical(1.0),
-                far: 5000.0,
-                near: 0.0,
-                ..default()
-            }
-            .into(),
-            camera: Camera {
-                hdr: true,
-                order: -1,
-                target: RenderTarget::Image(output_texture_handle.clone()),
-                ..Default::default()
-            },
-            transform: Transform {
-                translation: Vec3::new(120.0, -180.0, 420.0),
-                rotation: Quat::from_xyzw(-0., 0., 0., 1.),
-                ..Default::default()
-            },
 
-            ..Default::default()
-        },))
-        .insert(ScreenSpaceAmbientOcclusionBundle {
-            settings: ScreenSpaceAmbientOcclusionSettings {
-                quality_level: bevy::pbr::ScreenSpaceAmbientOcclusionQualityLevel::Ultra,
-                ..default()
-            },
-            ..default()
-        })
-        .insert(TemporalAntiAliasBundle::default());
-    // .insert(PlisCamera)
-
-    commands.spawn(ImageExportBundle {
-        source: export_sources.add(output_texture_handle.into()),
-        settings: ImageExportSettings {
-            // Frames will be saved to "./out/[#####].png".
-            output_dir: "out".into(),
-            // Choose "exr" for HDR renders.
-            extension: "png".into(),
-            render: false,
-        },
-    });
-}
-
-pub fn setup(mut commands: Commands) {
     commands.spawn(DirectionalLightBundle {
         transform: Transform::from_xyz(50.0, 150.0, 100.0).looking_at(Vec3::ZERO, Vec3::Y),
         directional_light: DirectionalLight {
@@ -155,6 +95,40 @@ pub fn setup(mut commands: Commands) {
             },
             ..Default::default()
         },))
+        .with_children(|parent| {
+            parent
+                .spawn((Camera3dBundle {
+                    projection: OrthographicProjection {
+                        scale: 420.0,
+                        scaling_mode: ScalingMode::FixedVertical(1.0),
+                        far: 5000.0,
+                        near: 0.0,
+                        ..default()
+                    }
+                    .into(),
+                    camera: Camera {
+                        hdr: true,
+                        order: -1,
+                        target: RenderTarget::Image(output_texture_handle.clone()),
+                        ..Default::default()
+                    },
+                    transform: Transform {
+                        translation: Vec3::new(120.0, -180.0, 420.0),
+                        rotation: Quat::from_xyzw(-0., 0., 0., 1.),
+                        ..Default::default()
+                    },
+
+                    ..Default::default()
+                },))
+                .insert(ScreenSpaceAmbientOcclusionBundle {
+                    settings: ScreenSpaceAmbientOcclusionSettings {
+                        quality_level: bevy::pbr::ScreenSpaceAmbientOcclusionQualityLevel::Ultra,
+                        ..default()
+                    },
+                    ..default()
+                })
+                .insert(TemporalAntiAliasBundle::default());
+        })
         .insert(ScreenSpaceAmbientOcclusionBundle {
             settings: ScreenSpaceAmbientOcclusionSettings {
                 quality_level: bevy::pbr::ScreenSpaceAmbientOcclusionQualityLevel::Medium,
@@ -163,5 +137,17 @@ pub fn setup(mut commands: Commands) {
             ..default()
         })
         .insert(TemporalAntiAliasBundle::default())
+        // .with_children(f)
         .insert(PlisCamera);
+
+    commands.spawn(ImageExportBundle {
+        source: export_sources.add(output_texture_handle.into()),
+        settings: ImageExportSettings {
+            // Frames will be saved to "./out/[#####].png".
+            output_dir: "out".into(),
+            // Choose "exr" for HDR renders.
+            extension: "png".into(),
+            render: false,
+        },
+    });
 }
