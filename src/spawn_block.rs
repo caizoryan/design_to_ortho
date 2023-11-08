@@ -6,11 +6,46 @@ use rand::Rng;
 
 use crate::{
     combined::combine_meshes,
-    config::Config,
+    config::{Ass_ets, Config},
     grid_master::{GridDaddy, GridMaster},
     make_outline_block, Block, BlockState, Bounds, ChunkState, ChunkStates, DeleteMeDaddy,
     Position, Rect, SCALE,
 };
+
+fn load_textures(assets: Ass_ets, asset_server: AssetServer) -> Vec<Handle<Image>> {
+    match assets {
+        Ass_ets::None => {
+            vec![]
+        }
+        Ass_ets::Wrinkles => {
+            let mut textures = Vec::new();
+
+            for i in 1..7 {
+                let texture_handle = asset_server.load(format!("fabric/img{}.png", i).as_str());
+                textures.push(texture_handle);
+            }
+            textures
+        }
+        Ass_ets::Fabric => {
+            let mut textures = Vec::new();
+
+            for i in 1..3 {
+                let texture_handle = asset_server.load(format!("fabric/img{}.png", i).as_str());
+                textures.push(texture_handle);
+            }
+            textures
+        }
+        Ass_ets::Light => {
+            let mut textures = Vec::new();
+
+            for i in 1..12 {
+                let texture_handle = asset_server.load(format!("light/img{}.png", i).as_str());
+                textures.push(texture_handle);
+            }
+            textures
+        }
+    }
+}
 
 fn spawn_grid(
     mut commands: &mut Commands,
@@ -21,12 +56,7 @@ fn spawn_grid(
 ) {
     let config = Config::new(None, None);
 
-    let mut textures = Vec::new();
-
-    for i in 1..12 {
-        let texture_handle = asset_server.load(format!("light/img{}.png", i).as_str());
-        textures.push(texture_handle);
-    }
+    let textures = load_textures(config.assets, asset_server.clone());
 
     for i in 0..grid_master.grid.cols() {
         let mut col = 0;
@@ -41,32 +71,76 @@ fn spawn_grid(
             };
             if block.occupied {
                 // if rand::thread_rng().gen::<f32>() > 0.2 {
-                let u = rand::thread_rng().gen::<usize>() % textures.len();
+                let u = match textures.len() {
+                    0 => 0,
+                    _ => rand::thread_rng().gen::<usize>() % textures.len(),
+                };
 
-                commands
-                    .spawn(PbrBundle {
-                        mesh: meshes.add(Mesh::from(shape::Cube { size: 1. * SCALE })),
-                        material: materials.add(StandardMaterial {
-                            base_color_texture: Some(textures[u].clone()),
-                            base_color: Color::rgb(
-                                config.base_color.0,
-                                config.base_color.1,
-                                config.base_color.2,
-                            ),
-                            // emissive: Color::rgb(0.0, 0.0, 0.0),
-                            perceptual_roughness: 0.9,
-                            ..default()
-                        }),
-                        transform: Transform::from_translation(
-                            Position(col, i, grid_master.layer).into(),
-                        ),
-                        ..default()
-                    })
-                    .insert(Block {
-                        cur_location: Position(col, i, grid_master.layer),
-                        next_location: None,
-                        state: BlockState::Idle,
-                    });
+                match config.shape {
+                    crate::config::Shape::Box => {
+                        commands
+                            .spawn(PbrBundle {
+                                mesh: meshes.add(Mesh::from(shape::Cube {
+                                    size: config.shape_size * SCALE,
+                                })),
+                                material: materials.add(StandardMaterial {
+                                    base_color_texture: match textures.len() {
+                                        0 => None,
+                                        _ => Some(textures[u].clone()),
+                                    },
+                                    base_color: Color::rgb(
+                                        config.base_color.0,
+                                        config.base_color.1,
+                                        config.base_color.2,
+                                    ),
+                                    // emissive: Color::rgb(0.0, 0.0, 0.0),
+                                    perceptual_roughness: 0.9,
+                                    ..default()
+                                }),
+                                transform: Transform::from_translation(
+                                    Position(col, i, grid_master.layer).into(),
+                                ),
+                                ..default()
+                            })
+                            .insert(Block {
+                                cur_location: Position(col, i, grid_master.layer),
+                                next_location: None,
+                                state: BlockState::Idle,
+                            });
+                    }
+                    crate::config::Shape::Sphere => {
+                        commands
+                            .spawn(PbrBundle {
+                                mesh: meshes.add(Mesh::from(shape::UVSphere {
+                                    radius: config.shape_size * 0.7 * SCALE,
+                                    ..Default::default()
+                                })),
+                                material: materials.add(StandardMaterial {
+                                    base_color_texture: match textures.len() {
+                                        0 => None,
+                                        _ => Some(textures[u].clone()),
+                                    },
+                                    base_color: Color::rgb(
+                                        config.base_color.0,
+                                        config.base_color.1,
+                                        config.base_color.2,
+                                    ),
+                                    // emissive: Color::rgb(0.0, 0.0, 0.0),
+                                    perceptual_roughness: 0.9,
+                                    ..default()
+                                }),
+                                transform: Transform::from_translation(
+                                    Position(col, i, grid_master.layer).into(),
+                                ),
+                                ..default()
+                            })
+                            .insert(Block {
+                                cur_location: Position(col, i, grid_master.layer),
+                                next_location: None,
+                                state: BlockState::Idle,
+                            });
+                    }
+                }
                 // } else {
                 //     commands
                 //         .spawn(PbrBundle {
