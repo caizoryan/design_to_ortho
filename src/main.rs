@@ -1,4 +1,5 @@
 mod combined;
+mod config;
 mod grid_master;
 mod modes;
 mod outline;
@@ -9,6 +10,7 @@ mod update_block;
 
 use bevy_image_export::{ImageExportBundle, ImageExportPlugin, ImageExportSource};
 use bevy_tweening::TweeningPlugin;
+use config::Config;
 use grid_master::{GridDaddy, GridMaster};
 use modes::Modes;
 use outline::make_outline_block;
@@ -122,9 +124,12 @@ impl Into<Bounds> for Rect {
 }
 
 fn multiple_grid() -> GridDaddy {
+    let config = Config::new();
+
     let mut v = Vec::new();
-    for i in 0..1 {
-        v.push(init_grid(40, 8, i));
+
+    for i in 0..config.layers {
+        v.push(init_grid(config.rows, config.cols, i));
     }
 
     GridDaddy { grids: v }
