@@ -1,0 +1,8 @@
+{
+  "assets": "Light",
+  "layers": 1,
+  "rows": 8,
+  "cols": 8,
+  "shape": "Box",
+  "postion": null
+}

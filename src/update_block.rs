@@ -16,7 +16,11 @@ use crate::{
 
 /// You can do some logic here to determine if you give the block texture or not
 fn give_texture(pos: Position) -> bool {
-    return true;
+    if pos.0.is_power_of_two() {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 pub fn update_block(
@@ -35,6 +39,8 @@ pub fn update_block(
 ) {
     for grid in grid_daddy.grids.iter_mut() {
         grid.clock.tick(time.delta_seconds());
+
+        // let texture_handle = asset_server.load("texture.png");
 
         for (entity, transform, mut block, material) in query.iter_mut() {
             if grid.layer == block.cur_location.2 {
@@ -79,15 +85,15 @@ pub fn update_block(
                                 true => block.next_location.as_ref().unwrap().clone(),
                                 false => block.cur_location.clone(),
                             };
-                            // if give_texture(loc) {
-                            //     if let Some(handle) = materials.get_mut(material) {
-                            //         handle.base_color_texture = Some(texture_handle.clone());
-                            //     }
-                            // } else {
-                            //     if let Some(handle) = materials.get_mut(material) {
-                            //         handle.base_color_texture = None;
-                            //     }
-                            // }
+                            if give_texture(loc) {
+                                // if let Some(handle) = materials.get_mut(material) {
+                                //     handle.base_color_texture = Some(texture_handle.clone());
+                                // }
+                            } else {
+                                // if let Some(handle) = materials.get_mut(material) {
+                                //     handle.base_color_texture = None;
+                                // }
+                            }
                         };
                     }
                     BlockState::Animating => {

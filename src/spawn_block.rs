@@ -16,7 +16,15 @@ fn spawn_grid(
     mut meshes: &mut Assets<Mesh>,
     mut materials: &mut Assets<StandardMaterial>,
     grid_master: &GridMaster,
+    asset_server: AssetServer,
 ) {
+    let mut textures = Vec::new();
+
+    for i in 1..12 {
+        let texture_handle = asset_server.load(format!("light/img{}.png", i).as_str());
+        textures.push(texture_handle);
+    }
+
     for i in 0..grid_master.grid.cols() {
         let mut col = 0;
 
@@ -30,12 +38,15 @@ fn spawn_grid(
             };
             if block.occupied {
                 // if rand::thread_rng().gen::<f32>() > 0.2 {
+                let u = rand::thread_rng().gen::<usize>() % textures.len();
+
                 commands
                     .spawn(PbrBundle {
                         mesh: meshes.add(Mesh::from(shape::Cube { size: 1. * SCALE })),
                         material: materials.add(StandardMaterial {
-                            base_color: Color::rgb(1.0, 0.0, 0.0),
-                            emissive: Color::rgb(0.0, 0.0, 0.0),
+                            base_color_texture: Some(textures[u].clone()),
+                            base_color: Color::rgb(1.0, 0.0, 1.0),
+                            // emissive: Color::rgb(0.0, 0.0, 0.0),
                             perceptual_roughness: 0.9,
                             ..default()
                         }),
@@ -81,9 +92,16 @@ pub fn init_blocks(
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
     grid_master: Res<GridDaddy>,
+    asset_server: Res<AssetServer>,
 ) {
     for grid in grid_master.grids.iter() {
-        spawn_grid(&mut commands, &mut meshes, &mut materials, grid);
+        spawn_grid(
+            &mut commands,
+            &mut meshes,
+            &mut materials,
+            grid,
+            asset_server.clone(),
+        );
     }
 }
 

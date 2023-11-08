@@ -6,6 +6,7 @@ use bevy_egui::{
 use bevy_image_export::ImageExportSettings;
 
 use crate::{
+    config::Config,
     modes::{CameraModes, CameraSelection, EditBlockModes, Modes},
     setup::PlisCamera,
     ChunkStates, UIState,
@@ -92,6 +93,11 @@ pub fn update(
             if keycode.just_released(KeyCode::R) {
                 println!("set to no");
                 render.render = false;
+                // write config to file
+                //
+                let config: Config = Config::new(None);
+                serde_json::to_writer_pretty(std::fs::File::create("config.txt").unwrap(), &config)
+                    .unwrap();
             }
         }
         Modes::Camera(mode) => handle_camera_mode(

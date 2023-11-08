@@ -53,6 +53,8 @@ impl CameraSelection {
             state.mode = Modes::Camera(CameraModes::Transform(Transform));
         } else if keycode.just_pressed(KeyCode::R) {
             state.mode = Modes::Camera(CameraModes::Rotate(Rotate));
+        } else if keycode.just_pressed(KeyCode::Escape) {
+            state.mode = Modes::Home;
         }
     }
     pub fn ui(self, ctx: &mut Context, camera_transform: &bevy::prelude::Transform) {

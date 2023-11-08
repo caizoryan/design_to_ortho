@@ -78,12 +78,14 @@ pub fn render_setup(
     // camera
     commands
         .spawn((Camera3dBundle {
-            // projection: OrthographicProjection {
-            //     scale: 420.0,
-            //     scaling_mode: ScalingMode::FixedVertical(1.0),
-            //     ..default()
-            // }
-            // .into(),
+            projection: OrthographicProjection {
+                scale: 420.0,
+                scaling_mode: ScalingMode::FixedVertical(1.0),
+                far: 5000.0,
+                near: 0.0,
+                ..default()
+            }
+            .into(),
             camera: Camera {
                 hdr: true,
                 order: -1,
@@ -105,9 +107,8 @@ pub fn render_setup(
             },
             ..default()
         })
-        .insert(TemporalAntiAliasBundle::default())
-        // .insert(PlisCamera)
-        .insert(Animator::new(tracks));
+        .insert(TemporalAntiAliasBundle::default());
+    // .insert(PlisCamera)
 
     commands.spawn(ImageExportBundle {
         source: export_sources.add(output_texture_handle.into()),

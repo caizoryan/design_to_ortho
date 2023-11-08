@@ -1519,6 +1519,8 @@ dependencies = [
  "grid 0.10.0",
  "image",
  "rand",
+ "serde",
+ "serde_json",
 ]
 
 [[package]]
