@@ -91,7 +91,7 @@ impl Default for AutoCube {
 }
 
 const LIFETIME: i32 = 100;
-pub const SCALE: f32 = 30.;
+pub const SCALE: f32 = 80.;
 
 #[derive(PartialEq, Eq, Clone)]
 pub enum ColorChannels {
@@ -107,8 +107,8 @@ fn main() {
         life_time: LIFETIME,
         scale: SCALE,
         perceptual_roughness: 0.5,
-        base_color: Color::rgb(0.09, 0.0, 0.0),
-        emissive_color: Color::rgb(1.0, 0.0, 0.0),
+        base_color: Color::rgb(1.0, 1.0, 1.0),
+        emissive_color: Color::rgb(0.0, 0.0, 0.0),
         inter_color: ColorChannels::R,
         bounds: Rect {
             x: -1.,
@@ -124,8 +124,8 @@ fn main() {
         life_time: LIFETIME,
         scale: SCALE,
         perceptual_roughness: 0.5,
-        base_color: Color::rgb(0.0, 0.09, 0.0),
-        emissive_color: Color::rgb(1.0, 0.0, 0.0),
+        base_color: Color::rgb(1.0, 1.0, 1.0),
+        emissive_color: Color::rgb(0.0, 0.0, 0.0),
         inter_color: ColorChannels::G,
         bounds: Rect {
             x: 1.5,

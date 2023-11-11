@@ -25,8 +25,8 @@ pub fn setup(
     // camera
     let output_texture_handle = {
         let size = Extent3d {
-            width: 1584 * 4,
-            height: 1584 * 4,
+            width: 1584,
+            height: 1584,
             ..default()
         };
         let mut export_texture = Image {
@@ -55,7 +55,7 @@ pub fn setup(
         transform: Transform::from_xyz(50.0, 150.0, 100.0).looking_at(Vec3::ZERO, Vec3::Y),
         directional_light: DirectionalLight {
             shadows_enabled: true,
-            illuminance: 10000.0,
+            illuminance: 700000.0,
             ..Default::default()
         },
         ..Default::default()

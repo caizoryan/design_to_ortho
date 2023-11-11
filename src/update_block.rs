@@ -11,7 +11,6 @@ pub fn update_block(
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
     mut commands: Commands,
-    asset_server: Res<AssetServer>,
     mut blocks: Query<(Entity, &mut AutoCube, &Transform, &Handle<StandardMaterial>)>,
     variables: Res<crate::ChunkStates>,
 ) {
@@ -54,20 +53,16 @@ pub fn update_block(
         let mut c = variables.base_color;
         let life_percent = block.life_time as f32 / variables.life_time as f32;
 
-        let _ = match variables.inter_color {
-            ColorChannels::R => c.set_r(life_percent),
-            ColorChannels::G => c.set_g(life_percent),
-            ColorChannels::B => c.set_b(life_percent),
-            ColorChannels::A => c.set_a(life_percent),
-        };
-
-        let texture_handle = asset_server.load("texture.png");
+        // let _ = match variables.inter_color {
+        //     ColorChannels::R => c.set_r(life_percent),
+        //     ColorChannels::G => c.set_g(life_percent),
+        //     ColorChannels::B => c.set_b(life_percent),
+        //     ColorChannels::A => c.set_a(life_percent),
+        // };
 
         let m = StandardMaterial {
             base_color: c,
-            emissive: variables.emissive_color,
-            emissive_texture: Some(texture_handle),
-            perceptual_roughness: variables.perceptual_roughness,
+            perceptual_roughness: 0.9,
             ..default()
         };
         let _ = materials.set(material, m);
