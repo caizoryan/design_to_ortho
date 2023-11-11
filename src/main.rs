@@ -48,6 +48,7 @@ pub struct Bounds {
 pub struct Rect {
     pub x: f32,
     pub y: f32,
+    pub z: f32,
     pub w: f32,
     pub h: f32,
 }
@@ -55,8 +56,8 @@ pub struct Rect {
 impl Into<Bounds> for Rect {
     fn into(self) -> Bounds {
         Bounds {
-            min: Vec3::new(self.x, self.y, 0.0),
-            max: Vec3::new(self.x + self.w, self.y + self.h, 0.0),
+            min: Vec3::new(self.x, self.y, self.z),
+            max: Vec3::new(self.x + self.w, self.y + self.h, self.z),
         }
     }
 }
@@ -90,8 +91,8 @@ impl Default for AutoCube {
     }
 }
 
-const LIFETIME: i32 = 100;
-pub const SCALE: f32 = 80.;
+const LIFETIME: i32 = 1;
+pub const SCALE: f32 = 230.;
 
 #[derive(PartialEq, Eq, Clone)]
 pub enum ColorChannels {
@@ -102,41 +103,60 @@ pub enum ColorChannels {
 }
 
 fn main() {
-    let block_1 = ChunkState {
-        playing: true,
-        life_time: LIFETIME,
-        scale: SCALE,
-        perceptual_roughness: 0.5,
-        base_color: Color::rgb(1.0, 1.0, 1.0),
-        emissive_color: Color::rgb(0.0, 0.0, 0.0),
-        inter_color: ColorChannels::R,
-        bounds: Rect {
-            x: -1.,
-            y: -1.,
-            w: 2.,
-            h: 4.,
-        }
-        .into(),
-    };
+    // let block_1 = ChunkState {
+    //     playing: true,
+    //     life_time: LIFETIME,
+    //     scale: SCALE,
+    //     perceptual_roughness: 0.9,
+    //     base_color: Color::rgb(1.0, 1.0, 1.0),
+    //     emissive_color: Color::rgb(0.0, 0.0, 0.0),
+    //     inter_color: ColorChannels::R,
+    //     bounds: Rect {
+    //         x: 1.,
+    //         y: 1.,
+    //         w: 2.,
+    //         h: 4.,
+    //         z: 0.,
+    //     }
+    //     .into(),
+    // };
 
     let block_2 = ChunkState {
         playing: true,
-        life_time: LIFETIME,
+        life_time: 60,
         scale: SCALE,
-        perceptual_roughness: 0.5,
+        perceptual_roughness: 0.9,
         base_color: Color::rgb(1.0, 1.0, 1.0),
         emissive_color: Color::rgb(0.0, 0.0, 0.0),
         inter_color: ColorChannels::G,
         bounds: Rect {
-            x: 1.5,
-            y: 2.5,
-            w: 1.,
-            h: 3.,
+            x: 0.,
+            y: 0.,
+            w: 5.,
+            h: 5.,
+            z: 0.,
         }
         .into(),
     };
+    // let block_3 = ChunkState {
+    //     playing: true,
+    //     life_time: 20,
+    //     scale: SCALE,
+    //     perceptual_roughness: 0.9,
+    //     base_color: Color::rgb(1.0, 1.0, 1.0),
+    //     emissive_color: Color::rgb(0.0, 0.0, 0.0),
+    //     inter_color: ColorChannels::G,
+    //     bounds: Rect {
+    //         x: 1.5,
+    //         y: 2.5,
+    //         w: 1.,
+    //         h: 3.,
+    //         z: 0.3,
+    //     }
+    //     .into(),
+    // };
 
-    let chunk_states = ChunkStates(vec![block_1, block_2]);
+    let chunk_states = ChunkStates(vec![block_2]);
 
     let export_plugin = ImageExportPlugin::default();
     let export_threads = export_plugin.threads.clone();
@@ -165,7 +185,7 @@ fn main() {
         .add_systems(Startup, init_blocks)
         .add_systems(FixedUpdate, update_block)
         .add_systems(Update, update)
-        .insert_resource(FixedTime::new_from_secs(0.1))
+        .insert_resource(FixedTime::new_from_secs(0.8))
         .run();
 
     export_threads.finish();

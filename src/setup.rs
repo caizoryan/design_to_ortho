@@ -25,8 +25,8 @@ pub fn setup(
     // camera
     let output_texture_handle = {
         let size = Extent3d {
-            width: 1584,
-            height: 1584,
+            width: 1584 * 2,
+            height: 1584 * 2,
             ..default()
         };
         let mut export_texture = Image {
@@ -55,7 +55,7 @@ pub fn setup(
         transform: Transform::from_xyz(50.0, 150.0, 100.0).looking_at(Vec3::ZERO, Vec3::Y),
         directional_light: DirectionalLight {
             shadows_enabled: true,
-            illuminance: 700000.0,
+            illuminance: 90000.0,
             ..Default::default()
         },
         ..Default::default()
@@ -65,7 +65,7 @@ pub fn setup(
     commands
         .spawn((Camera3dBundle {
             projection: OrthographicProjection {
-                scale: 920.0,
+                scale: 1620.0,
                 scaling_mode: ScalingMode::FixedVertical(1.0),
                 far: 5000.0,
                 near: 0.0,
@@ -77,7 +77,7 @@ pub fn setup(
                 ..Default::default()
             },
             transform: Transform {
-                translation: Vec3::new(120.0, -180.0, 420.0),
+                translation: Vec3::new(120.0, 880.0, 420.0),
                 rotation: Quat::from_xyzw(-0., 0., 0., 1.),
                 ..default()
             },
@@ -87,7 +87,7 @@ pub fn setup(
             parent
                 .spawn((Camera3dBundle {
                     projection: OrthographicProjection {
-                        scale: 920.0,
+                        scale: 1620.0,
                         scaling_mode: ScalingMode::FixedVertical(1.0),
                         far: 5000.0,
                         near: 0.0,

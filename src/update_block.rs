@@ -22,7 +22,7 @@ pub fn update_block(
                 commands
                     .spawn(PbrBundle {
                         mesh: meshes.add(Mesh::from(shape::Cube {
-                            size: rand::thread_rng().gen_range(0.01 * SCALE..0.4 * SCALE),
+                            size: rand::thread_rng().gen_range(0.07 * SCALE..0.6 * SCALE),
                         })),
                         material: materials.add(StandardMaterial {
                             base_color: variables.base_color,

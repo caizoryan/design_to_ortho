@@ -10,23 +10,6 @@ fn _spawn_block(
     chunk: &ChunkState,
     i: usize,
 ) {
-    let c = ChunkState {
-        playing: true,
-        life_time: 100,
-        base_color: Color::rgb(1.0, 0.7, 0.0),
-        emissive_color: Color::rgb(1.0, 0.0, 0.0),
-        scale: 1.0,
-        inter_color: ColorChannels::R,
-        perceptual_roughness: 0.0,
-        bounds: Rect {
-            x: -1.,
-            y: -1.,
-            w: 2.,
-            h: 4.,
-        }
-        .into(),
-    };
-
     commands
         .spawn(PbrBundle {
             mesh: meshes.add(Mesh::from(shape::Cube {
