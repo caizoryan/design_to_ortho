@@ -6,6 +6,7 @@ mod spawn_block;
 mod update;
 mod update_block;
 
+use bevy_image_export::ImageExportPlugin;
 use modes::Modes;
 use outline::make_outline_block;
 use setup::setup;
@@ -13,7 +14,9 @@ use spawn_block::init_blocks;
 use update::update;
 use update_block::update_block;
 
-use bevy::{core_pipeline::experimental::taa::TemporalAntiAliasPlugin, prelude::*};
+use bevy::{
+    core_pipeline::experimental::taa::TemporalAntiAliasPlugin, prelude::*, window::WindowResolution,
+};
 use bevy_egui::EguiPlugin;
 
 #[derive(Resource)]
@@ -88,7 +91,7 @@ impl Default for AutoCube {
 }
 
 const LIFETIME: i32 = 100;
-pub const SCALE: f32 = 3.;
+pub const SCALE: f32 = 30.;
 
 #[derive(PartialEq, Eq, Clone)]
 pub enum ColorChannels {
@@ -135,6 +138,9 @@ fn main() {
 
     let chunk_states = ChunkStates(vec![block_1, block_2]);
 
+    let export_plugin = ImageExportPlugin::default();
+    let export_threads = export_plugin.threads.clone();
+
     App::new()
         .insert_resource(AmbientLight {
             brightness: 3.0,
@@ -143,7 +149,16 @@ fn main() {
         .insert_resource(UIState { mode: Modes::Home })
         .insert_resource(chunk_states)
         .insert_resource(ClearColor(Color::rgb(0.0, 0.0, 0.0)))
-        .add_plugins(DefaultPlugins)
+        .add_plugins((
+            DefaultPlugins.set(WindowPlugin {
+                primary_window: Some(Window {
+                    resolution: WindowResolution::new(768.0, 768.0).with_scale_factor_override(1.0),
+                    ..default()
+                }),
+                ..default()
+            }),
+            export_plugin,
+        ))
         .add_plugins(TemporalAntiAliasPlugin)
         .add_plugins(EguiPlugin)
         .add_systems(Startup, setup)
@@ -152,4 +167,6 @@ fn main() {
         .add_systems(Update, update)
         .insert_resource(FixedTime::new_from_secs(0.1))
         .run();
+
+    export_threads.finish();
 }

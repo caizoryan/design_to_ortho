@@ -3,6 +3,7 @@ use bevy_egui::{
     egui::{self, Context, InnerResponse, Ui, Widget},
     EguiContexts,
 };
+use bevy_image_export::ImageExportSettings;
 
 use crate::{
     modes::{CameraModes, CameraSelection, EditBlockModes, Modes},
@@ -96,25 +97,37 @@ pub fn update(
     mut contexts: EguiContexts,
     variables: ResMut<ChunkStates>,
     mut state: ResMut<UIState>,
-    mut projection: Query<&mut Projection>,
+
+    mut render: Query<&mut ImageExportSettings>,
+    mut query: Query<(Entity, &mut Projection), With<PlisCamera>>,
     mut transform: Query<&mut Transform, With<PlisCamera>>,
     keycode: Res<Input<KeyCode>>,
 ) {
     let ctx = contexts.ctx_mut();
 
+    let mut q = query.single_mut();
+    let projection = q.1.as_mut();
+
     let mut chunk_states = variables;
     let chunk_states = chunk_states.as_mut();
 
-    let mut projection = projection.single_mut();
-    let projection = projection.as_mut();
-
     let mut transform = transform.single_mut();
     let transform = transform.as_mut();
+
+    let mut render = render.single_mut();
 
     let _ = match state.mode.clone() {
         Modes::Home => {
             if keycode.just_pressed(KeyCode::C) {
                 state.mode = Modes::Camera(CameraModes::Selection(CameraSelection));
+            }
+            if keycode.pressed(KeyCode::R) {
+                println!("rendering");
+                render.render = true;
+            }
+            if keycode.just_released(KeyCode::R) {
+                println!("set to no");
+                render.render = false;
             }
         }
         Modes::Camera(mode) => handle_camera_mode(ctx, state, keycode, mode, transform, projection),

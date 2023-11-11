@@ -66,9 +66,9 @@ pub fn init_blocks(
     b.min.z = -0.3;
     b.max.z = 0.3;
 
-    let vec = make_outline_block(&b);
+    // let vec = make_outline_block(&b);
 
-    spawn_from_mesh(&mut commands, vec, &mut meshes, &mut materials);
+    // spawn_from_mesh(&mut commands, vec, &mut meshes, &mut materials);
 }
 
 fn spawn_from_mesh(
